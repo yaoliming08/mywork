@@ -9,19 +9,49 @@
       </view>
     </view>
 
-    <!-- <view>
-      <u-form labelPosition="left" :model="dataObj.model1" :rules="dataObj.rules" ref="form1">
-        <u-form-item label="姓名" prop="userInfo.name" borderBottom ref="item1">
-          <u-input v-model="dataObj.model1.userInfo.name" border="none"></u-input>
-        </u-form-item>
-      </u-form>
-    </view> -->
+
+
+    <view class="login-box-bottom">
+
+      <view class="bottom-line">
+        <image class="img" mode="widthFix" src="@/assets/img/icon2.png" />
+
+        <u-input v-model="dataObj.model1.userInfo.useName" placeholder="请输入用户名" border="none" placeholderStyle="font-size: 12rpx"></u-input>
+      </view>
+
+
+      <view class="bottom-line">
+        <image class="img" mode="widthFix" src="@/assets/img/icon3.png" />
+
+        <u-input v-model="dataObj.model1.userInfo.useName" placeholder="请输入密码" border="none"></u-input>
+
+      </view>
+
+
+
+
+
+    </view>
 
   </view>
 
 </template>
 
 <script setup lang="ts">
+
+import { reactive } from 'vue'
+
+const dataObj = reactive({
+  id: 111111,
+  showSex: false,
+  model1: {
+    userInfo: {
+      useName: '',
+      passWord: '',
+    },
+  },
+  rules: {}
+})
 
 </script>
 
@@ -52,7 +82,8 @@
       top: calc(50% - 35rpx);
 
     }
-    .login-box-text{
+
+    .login-box-text {
       position: absolute;
       z-index: 3;
       width: 100%;
@@ -62,14 +93,34 @@
       flex-direction: column;
       align-items: center;
       justify-content: flex-end;
-      .top-title{
+
+      .top-title {
         font-size: 60rpx;
         font-family: PangMenZhengDaoBiaoTiTiMianFeiBan-4;
-font-weight: 400;
+        font-weight: 400;
       }
-      .top-text{
+
+      .top-text {
         color: #888888;
         font-size: 28rpx;
+      }
+    }
+
+  }
+
+
+  .login-box-bottom{
+    padding: 80rpx 36rpx 30rpx;
+    .bottom-line{
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid #E0E0E0;
+      padding-bottom: 20rpx;
+      padding-top: 25rpx;
+      .img{
+        width: 34rpx;
+        height: 34rpx;
+        margin-right: 20rpx;
       }
     }
 
