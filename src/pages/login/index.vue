@@ -13,23 +13,48 @@
 
     <view class="login-box-bottom">
 
-      <view class="bottom-line">
-        <image class="img" mode="widthFix" src="@/assets/img/icon2.png" />
-
-        <u-input v-model="dataObj.model1.userInfo.useName" placeholder="请输入用户名" border="none" placeholderStyle="font-size: 12rpx"></u-input>
-      </view>
+      <u-form labelPosition="left" :model="dataObj" :rules="dataObj.rules" ref="loginFrom">
 
 
-      <view class="bottom-line">
-        <image class="img" mode="widthFix" src="@/assets/img/icon3.png" />
+        <u-form-item  borderBottom prop="useName">
 
-        <u-input v-model="dataObj.model1.userInfo.useName" placeholder="请输入密码" border="none"></u-input>
+          <view class="bottom-line">
+            <image class="img" mode="widthFix" src="@/assets/img/icon2.png" />
+            <u-input v-model="dataObj.useName" placeholder="请输入用户名" border="none"
+              placeholderClass="input-line"></u-input>
+          </view>
 
-      </view>
-
+        </u-form-item>
 
 
 
+
+        <u-form-item prop="passWord" borderBottom>
+
+          <view class="bottom-line">
+            <image class="img" mode="widthFix" src="@/assets/img/icon3.png" />
+
+            <u-input v-model="dataObj.passWord" placeholder="请输入密码" border="none"
+              placeholderClass="input-line"></u-input>
+
+          </view>
+
+        </u-form-item>
+
+
+
+        <view class="bottom-line-btn">
+          <u-button text="登录" color="#1D76F6" @click="login"></u-button>
+        </view>
+
+
+      </u-form>
+
+
+    </view>
+
+    <view class="login-box-deal">
+      <text>阅读并同意<text class="deal">《用户协议》</text>&<text class="deal">《隐私条款》</text></text>
 
     </view>
 
@@ -39,19 +64,62 @@
 
 <script setup lang="ts">
 
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
+
+const loginFrom = ref(null)
 
 const dataObj = reactive({
   id: 111111,
   showSex: false,
+  useName: '',
+  passWord: '',
   model1: {
     userInfo: {
       useName: '',
       passWord: '',
     },
   },
-  rules: {}
+  rules: {
+    'useName': {
+      type: 'string',
+      required: true,
+      message: '请填写用户名',
+      trigger: ['blur', 'change']
+    },
+    'passWord': {
+      type: 'string',
+      required: true,
+      message: '请填写密码',
+      trigger: ['blur', 'change']
+    }
+
+  }
 })
+
+
+const login = async () => {
+
+  loginFrom.value.validate().then((res:boolean) => {
+    console.log('登录挑战页面')
+
+    uni.redirectTo({
+          url: `/pages/ai-riskp/index`,
+        })
+
+     
+
+	
+			}).catch((errors:any) => {
+    
+
+			})
+		
+
+
+    }
+
+
+
 
 </script>
 
@@ -109,21 +177,48 @@ const dataObj = reactive({
   }
 
 
-  .login-box-bottom{
+  .login-box-bottom {
     padding: 80rpx 36rpx 30rpx;
-    .bottom-line{
+
+    .bottom-line {
       display: flex;
       align-items: center;
-      border-bottom: 1px solid #E0E0E0;
       padding-bottom: 20rpx;
       padding-top: 25rpx;
-      .img{
+
+      .img {
         width: 34rpx;
         height: 34rpx;
-        margin-right: 20rpx;
+        margin-right: 28rpx;
       }
     }
 
   }
+
+  .bottom-line-btn {
+    margin-top: 100rpx;
+    border-radius: 20rpx;
+    overflow: hidden;
+  }
+
+  .login-box-deal {
+    position: fixed;
+    width: 100vw;
+    text-align: center;
+    bottom: 65rpx;
+    font-size: 24rpx;
+    color: #666666;
+
+    .deal {
+      color: #56AEED;
+    }
+  }
+}
+</style>
+
+<style>
+.input-line {
+  color: #BBBBBB;
+  font-size: 26rpx;
 }
 </style>

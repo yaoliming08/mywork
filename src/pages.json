@@ -10,6 +10,13 @@
         "navigationBarTitleText": "",
         "disableScroll": true
       }
+    },
+    {
+      "path": "pages/ai-riskp/index",
+      "style": {
+        "navigationBarTitleText": "",
+        "disableScroll": true
+      }
     }
   
   ],
