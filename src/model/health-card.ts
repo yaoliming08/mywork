@@ -1,0 +1,1 @@
+declare function requirePlugin<T>(name:string): T
