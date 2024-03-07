@@ -9,32 +9,27 @@
       </view>
     </view>
 
-
-
     <view class="login-box-bottom">
 
       <u-form labelPosition="left" :model="dataObj" :rules="dataObj.rules" ref="loginFrom">
 
 
-        <u-form-item  borderBottom prop="useName">
+        <u-form-item borderBottom prop="userName">
 
           <view class="bottom-line">
             <image class="img" mode="widthFix" src="@/assets/img/icon2.png" />
-            <u-input v-model="dataObj.useName" placeholder="请输入用户名" border="none"
+            <u-input v-model="dataObj.userName" placeholder="请输入用户名" border="none"
               placeholderClass="input-line"></u-input>
           </view>
 
         </u-form-item>
 
-
-
-
-        <u-form-item prop="passWord" borderBottom>
+        <u-form-item prop="password" borderBottom>
 
           <view class="bottom-line">
             <image class="img" mode="widthFix" src="@/assets/img/icon3.png" />
 
-            <u-input v-model="dataObj.passWord" placeholder="请输入密码" border="none"
+            <u-input v-model="dataObj.password" placeholder="请输入密码" border="none"
               placeholderClass="input-line"></u-input>
 
           </view>
@@ -44,7 +39,7 @@
 
 
         <view class="bottom-line-btn">
-          <u-button text="登录" color="#1D76F6" @click="login"></u-button>
+          <u-button text="登录" color="#1D76F6" @click="loginOn"></u-button>
         </view>
 
 
@@ -65,28 +60,29 @@
 <script setup lang="ts">
 
 import { reactive, ref } from 'vue'
+import { login } from '@/request/login'
 
 const loginFrom = ref(null)
 
 const dataObj = reactive({
   id: 111111,
   showSex: false,
-  useName: '',
-  passWord: '',
+  userName: '',
+  password: '',
   model1: {
     userInfo: {
-      useName: '',
-      passWord: '',
+      userName: '',
+      password: '',
     },
   },
   rules: {
-    'useName': {
+    'userName': {
       type: 'string',
       required: true,
       message: '请填写用户名',
       trigger: ['blur', 'change']
     },
-    'passWord': {
+    'password': {
       type: 'string',
       required: true,
       message: '请填写密码',
@@ -97,26 +93,38 @@ const dataObj = reactive({
 })
 
 
-const login = async () => {
+const loginOn = async () => {
 
-  loginFrom.value.validate().then((res:boolean) => {
+  loginFrom.value.validate().then((res: boolean) => {
     console.log('登录挑战页面')
 
-    uni.redirectTo({
-          url: `/pages/ai-riskp/index`,
-        })
+    login({
+      userName: dataObj.userName,
+      password: dataObj.password
+    }).then(() => {
+      uni.redirectTo({
+        url: `/pages/ai-riskp/index`,
+      })
+    })
 
-     
-
-	
-			}).catch((errors:any) => {
-    
-
-			})
-		
+  }).catch((errors: any) => {
 
 
-    }
+  })
+
+
+
+}
+
+if (uni.getStorageSync('isLogin')) {
+  console.log('已经登录了')
+  uni.redirectTo({
+    url: `/pages/ai-riskp/index`,
+  })
+
+}
+
+
 
 
 
@@ -197,7 +205,7 @@ const login = async () => {
 
   .bottom-line-btn {
     margin-top: 100rpx;
-    border-radius: 20rpx;
+    border-radius: 50rpx;
     overflow: hidden;
   }
 

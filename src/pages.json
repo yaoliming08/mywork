@@ -17,6 +17,13 @@
         "navigationBarTitleText": "",
         "disableScroll": true
       }
+    },
+    {
+      "path": "pages/instructions/index",
+      "style": {
+        "navigationBarTitleText": "",
+        "disableScroll": true
+      }
     }
   
   ],
