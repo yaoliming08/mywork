@@ -23,19 +23,19 @@
 
         <view v-if="isCheck == '1'">
 
-            <u-form labelPosition="left" :model="dataObj" :rules="dataObj.rules" ref="loginFrom">
-                <u-form-item borderBottom prop="useName" label="姓名" labelWidth="90">
-                    <u-input v-model="dataObj.useName" placeholder="请输入" border="none"
+            <u-form labelPosition="left" :model="leftData" :rules="leftData.rules" ref="leftFrom">
+                <u-form-item borderBottom prop="userName" label="姓名" labelWidth="90">
+                    <u-input v-model="leftData.userName" placeholder="请输入" border="none"
                         placeholderClass="input-line"></u-input>
                 </u-form-item>
 
-                <u-form-item prop="passWord" borderBottom label="身份证号" labelWidth="90">
-                    <u-input v-model="dataObj.passWord" placeholder="请输入" border="none"
+                <u-form-item prop="idCard" borderBottom label="身份证号" labelWidth="90">
+                    <u-input v-model="leftData.idCard" placeholder="请输入" border="none"
                         placeholderClass="input-line"></u-input>
                 </u-form-item>
 
-                <u-form-item prop="passWord" borderBottom label="区域" labelWidth="90">
-                    <u-input v-model="dataObj.passWord" placeholder="请选择" border="none"
+                <u-form-item prop="areaCode" borderBottom label="区域" labelWidth="90" @click="leftShow = true">
+                    <u-input v-model="leftData.areaCode" placeholder="请选择" border="none" 
                         placeholderClass="input-line"></u-input>
                 </u-form-item>
 
@@ -50,7 +50,7 @@
             </view>
 
             <view class="bottom-line-btn">
-                <u-button text="获取二维码" color="#83B4FA"></u-button>
+                <u-button text="获取二维码" color="#83B4FA" @click="getCode"></u-button>
             </view>
 
 
@@ -60,7 +60,7 @@
 
             <u-form labelPosition="left" :model="dataObj" :rules="dataObj.rules" ref="loginFrom">
                 <u-form-item borderBottom prop="bankName" label="银行" labelWidth="90" @click="show = true">
-                    <u-input v-model="dataObj.bankName" placeholder="请选择" border="none"
+                    <u-input v-model="dataObj.bankName" placeholder="请选择" border="none" disabled
                         placeholderClass="input-line"></u-input>
                 </u-form-item>
 
@@ -97,6 +97,7 @@
 
         </view>
         <u-picker :show="show" :columns="columns" @confirm="confirm" @cancel="show = false"></u-picker>
+        <u-picker :show="leftShow" :columns="leftColumns" @confirm="leftConfirm" @cancel="leftShow = false"></u-picker>
 
     </view>
 
@@ -105,67 +106,138 @@
 <script setup lang="ts">
 import commonHed from '@/components/common-hed.vue'
 import { ref, reactive } from 'vue'
-import { submit } from '@/request/common'
+import { submit, getCodeImg } from '@/request/common'
 
 const isCheck = ref('1')
 const show = ref(false)
+const leftShow = ref(false)
+const leftFrom = ref(null)
 
 const checkTab = (value: string) => {
     isCheck.value = value
 }
 
 const columns = reactive([['支付宝', '微信', '工商银行', '农业银行', '建设银行', '交通银行', '招商银行']])
+const leftColumns = reactive([['江苏', '广东']])
 
+const leftData = reactive({
+    idCard: '',
+    userName: '',
+    areaCode: '',
+    rules: {
+        'userName': {
+            type: 'string',
+            required: true,
+            message: '请填写姓名',
+            trigger: ['blur', 'change']
+        },
+        'areaCode': {
+            type: 'string',
+            required: true,
+            message: '请选择区域',
+            trigger: ['blur', 'change']
+        },
+        'idCard': {
+            type: 'string',
+            required: true,
+            message: '请填写身份证号',
+            trigger: ['blur', 'change']
+        },
+
+    }
+
+})
 
 const dataObj = reactive({
     showSex: false,
-    useName: '',
-    bankName:'',
-    emie:'',
+    bankName: '',
+    emie: '',
     idCard: '',
-    userName:'',
+    userName: '',
     passWord: '',
     extractCode: '',
-    model1: {
-        userInfo: {
-            useName: '',
-            passWord: '',
-        },
-    },
+
     rules: {
-        'useName': {
+        'userName': {
             type: 'string',
             required: true,
             message: '请填写用户名',
             trigger: ['blur', 'change']
         },
-        'passWord': {
+        'areaCode': {
             type: 'string',
             required: true,
             message: '请填写密码',
             trigger: ['blur', 'change']
-        }
+        },
+        'idCard': {
+            type: 'string',
+            required: true,
+            message: '请填写密码',
+            trigger: ['blur', 'change']
+        },
 
     }
 })
 
 
-const confirm = (e:any) => {
+
+const getCode = async () => {
+
+    leftFrom.value.validate().then((res: boolean) => {
+        getImgCode()
+
+
+
+
+
+    }).catch((errors: any) => {
+
+
+    })
+
+
+}
+
+
+const getImgCode = async () => {
+    let data = await getCodeImg({
+        "areaCode": leftData.areaCode,
+        "idCard": leftData.idCard,
+        "userName": leftData.userName,
+    })
+
+    console.log(data, 2222222)
+}
+
+
+
+
+const confirm = (e: any) => {
     console.log('confirm', e);
     dataObj.bankName = e.value[0]
     show.value = false;
 };
+
+const leftConfirm = (e: any) => {
+    console.log('confirm', e);
+    leftData.areaCode = e.value[0]
+    leftShow.value = false;
+};
+
+
+
 
 
 
 const submitLS = () => {
 
     let requestObj = {
-        bankName:dataObj.bankName,
-        extractCode:dataObj.extractCode,
-        idCard:dataObj.idCard,
-        userName:dataObj.userName,
-        
+        bankName: dataObj.bankName,
+        extractCode: dataObj.extractCode,
+        idCard: dataObj.idCard,
+        userName: dataObj.userName,
+
 
 
 
@@ -178,8 +250,33 @@ const submitLS = () => {
 
 
 const goDeal = () => {
+    let id = 0
+    if (isCheck.value == '0') {
+        id = 0
+
+    } else {
+        id = 1
+        if (dataObj.bankName == '支付宝') {
+            id = 2
+        } else if (dataObj.bankName == '微信') {
+            id = 3
+        } else if (dataObj.bankName == '工商银行') {
+            id = 1
+        } else if (dataObj.bankName == '农业银行') {
+            id = 5
+        } else if (dataObj.bankName == '建设银行') {
+            id = 4
+        } else if (dataObj.bankName == '交通银行') {
+            id = 1
+        } else if (dataObj.bankName == '招商银行') {
+            id = 6
+        }
+
+    }
+
+
     uni.navigateTo({
-        url: `/pages/instructions/index?id=1`,
+        url: `/pages/instructions/index?id=${id}`,
     })
 }
 

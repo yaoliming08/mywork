@@ -7,10 +7,10 @@ export function http<T = any>(params: HttpParams): Promise<T> {
     url,
   } = params as HttpPageParams;
   const requestData = Object.assign({}, data);
-  // if (loading)
-  //   uni.showLoading({
-  //     title: '加载中...',
-  //   })
+  if (loading)
+    uni.showLoading({
+      title: '加载中...',
+    })
   const requestConfig = {
     url: url,
     method,
