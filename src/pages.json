@@ -4,13 +4,7 @@
       "^u-(.*)": "uview-plus/components/u-$1/u-$1.vue"
     }
   },
-  "pages": [{
-      "path": "pages/login/index",
-      "style": {
-        "navigationBarTitleText": "",
-        "disableScroll": true
-      }
-    },
+  "pages": [
     {
       "path": "pages/ai-riskp/index",
       "style": {
@@ -19,7 +13,7 @@
       }
     },
     {
-      "path": "pages/instructions/index",
+      "path": "pages/login/index",
       "style": {
         "navigationBarTitleText": "",
         "disableScroll": true
@@ -28,6 +22,19 @@
   
   ],
   "subPackages": [
+    {
+      "root": "pages/sunPack",
+      "pages": [    {
+        "path": "instructions/index",
+        "style": {
+          "navigationBarTitleText": "",
+          "disableScroll": true,
+          "navigationStyle":"default"
+        }
+      }
+
+    ]
+    }
 
 
   ],

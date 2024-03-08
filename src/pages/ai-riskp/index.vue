@@ -1,18 +1,12 @@
 <template>
     <commonHed />
     <view class="ai-table">
-
         <image class="bg-img" mode="widthFix" src="@/assets/img/bg3.png" :style="{ 'width': '750rpx' }" />
-
-
         <view class="table-line" :class="{ 'isCheck': isCheck === '1' }" @click="checkTab('1')">
-
             <image v-if="isCheck == '1'" class="img" mode="widthFix" src="@/assets/img/bg4.png"
                 :style="{ 'left': 0 }" />
             <text class="text">税务收入</text>
         </view>
-
-
         <view class="table-line" :class="{ 'isCheck': isCheck === '2' }" @click="checkTab('2')">
             <image v-if="isCheck == '2'" class="img reversalImg" mode="widthFix" src="@/assets/img/bg4.png"
                 :style="{ 'right': 0 }" />
@@ -20,7 +14,6 @@
         </view>
     </view>
     <view class="ai-table-box">
-
         <view v-if="isCheck == '1'">
             <u-form labelPosition="left" :model="leftData" :rules="leftData.rules" ref="leftFrom">
                 <u-form-item borderBottom prop="userName" label="姓名" labelWidth="90">
@@ -38,9 +31,7 @@
                         placeholderClass="input-line"></u-input>
                 </u-form-item>
             </u-form>
-
             <text class="deal-box">不知道怎么用，查看<text class="deal" @click="goDeal">《操作指南》</text></text>
-
             <view class="code-box">
                 <image v-if="leftData.codeImgUrl" class="code-img" mode="widthFix" :src="leftData.codeImgUrl" />
                 <view class="img-box" v-else-if="leftData.SCANNED">
@@ -53,23 +44,17 @@
             <view class="bottom-line-btn">
                 <u-button text="获取二维码" color="#83B4FA" @click="getCode"></u-button>
             </view>
-
-
-
         </view>
         <view v-if="isCheck == '2'">
-
             <u-form labelPosition="left" :model="dataObj" :rules="dataObj.rules" ref="rightForm">
                 <u-form-item borderBottom prop="bankName" label="银行" labelWidth="90" @click="show = true">
                     <u-input v-model="dataObj.bankName" placeholder="请选择" border="none" disabled
                         placeholderClass="input-line"></u-input>
                 </u-form-item>
-
                 <u-form-item prop="userName" borderBottom label="姓名" labelWidth="90">
                     <u-input v-model="dataObj.userName" placeholder="请输入" border="none"
                         placeholderClass="input-line"></u-input>
                 </u-form-item>
-
                 <u-form-item prop="idCard" borderBottom label="身份证号" labelWidth="90">
                     <u-input v-model="dataObj.idCard" placeholder="请输入" border="none"
                         placeholderClass="input-line"></u-input>
@@ -82,25 +67,15 @@
                     <u-input v-model="dataObj.extractCode" placeholder="请输入" border="none"
                         placeholderClass="input-line"></u-input>
                 </u-form-item>
-
-
-
             </u-form>
-
             <text class="deal-box">不知道怎么用，查看<text class="deal" @click="goDeal">《操作指南》</text></text>
-
-
-
             <view class="bottom-line-btn">
                 <u-button text="提交" color="#83B4FA" @click="submitLS"></u-button>
             </view>
-
-
         </view>
         <u-picker :show="show" :columns="columns" @confirm="confirm" @cancel="show = false"></u-picker>
         <u-picker :show="leftShow" :columns="leftColumns" @confirm="leftConfirm" @cancel="leftShow = false"></u-picker>
     </view>
-
     <view v-if="isCheck == '1' && codeSuccess"
         :style="{ 'backgroundColor': '#F5F7FA', 'padding': '30rpx 0', 'margin-top': '20rpx' }">
         <view class="ai-bottom">
@@ -113,14 +88,11 @@
 
         </view>
     </view>
-
 </template>
-
 <script setup lang="ts">
 import commonHed from '@/components/common-hed.vue'
 import { ref, reactive } from 'vue'
 import { submit, getCodeImg, getImgState } from '@/request/common'
-
 const isCheck = ref('1')
 const show = ref(false)
 const leftShow = ref(false)
@@ -150,12 +122,6 @@ const leftData = reactive({
             message: '请填写姓名',
             trigger: ['blur', 'change']
         },
-        // 'areaCode': {
-        //     type: 'string',
-        //     required: true,
-        //     message: '请选择区域',
-        //     trigger: ['blur', 'change']
-        // },
         'idCard': {
             type: 'string',
             required: true,
@@ -210,11 +176,7 @@ const getCode = async () => {
     leftFrom.value.validate().then((res: boolean) => {
         getImgCode()
     }).catch((errors: any) => {
-
-
     })
-
-
 }
 
 let timeStates:any
@@ -235,14 +197,12 @@ const getImgCode = async () => {
             clearInterval(timeStates)
         }
     }, 3000); // 肖金授信户数占比图
-    console.log(data, 2222222)
 }
 
 const getCodeState = async () => {
     let data = await getImgState({
         uuid: leftData.qrUuid
     })
-
 
     if (data.msg !== 'NOT_SCAN' && data.msg !== 'SCANNED') {
         let msg = data.message
@@ -367,7 +327,7 @@ const goDeal = () => {
 
 
     uni.navigateTo({
-        url: `/pages/instructions/index?id=${id}`,
+        url: `/instructions/index?id=${id}`,
     })
 }
 

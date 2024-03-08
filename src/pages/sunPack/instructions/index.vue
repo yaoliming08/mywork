@@ -1,11 +1,7 @@
 <template>
   <view class="instructions">
-
     <u-navbar title=" 操作指南" :bgColor="'#1D76F6'" titleStyle="color:#FFFFFF;" leftIconColor="#FFFFFF" @leftClick="goBack">
-			
 		</u-navbar>
-
-
     <image v-if="queryData.id =='0'" class="img" mode="widthFix" src="@/assets/deal/deal0.png" />
     <image v-else-if="queryData.id =='1'" class="img" mode="widthFix" src="@/assets/deal/deal1.png" />
     <image v-else-if="queryData.id =='2'" class="img" mode="widthFix" src="@/assets/deal/deal2.png" />
@@ -19,7 +15,7 @@
 
 <script setup lang="ts">
 
-import { onLoad, onPullDownRefresh } from '@dcloudio/uni-app';
+import { onLoad } from '@dcloudio/uni-app';
 import { ref } from 'vue';
 
 const queryData = ref({id:''})
@@ -28,8 +24,6 @@ onLoad(query => {
 console.log(query, '‘query’');
 queryData.value = query
 })
-
-
 
 const goBack = ()=>{
   uni.navigateBack();
