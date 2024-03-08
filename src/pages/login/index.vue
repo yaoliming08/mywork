@@ -1,5 +1,5 @@
 <template>
-  <view class="login-box">
+  <view class="login-box" v-if="!isLogin">
     <view class="login-box-hed">
       <image class="login-bg-hed" mode="widthFix" src="@/assets/img/bg1.png" />
       <image class="login-icon-hed" mode="widthFix" src="@/assets/img/icon1.png" />
@@ -63,6 +63,7 @@ import { reactive, ref } from 'vue'
 import { login } from '@/request/login'
 
 const loginFrom = ref(null)
+const isLogin = ref(uni.getStorageSync('isLogin'))
 
 const dataObj = reactive({
   id: 111111,

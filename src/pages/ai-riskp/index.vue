@@ -22,7 +22,6 @@
     <view class="ai-table-box">
 
         <view v-if="isCheck == '1'">
-
             <u-form labelPosition="left" :model="leftData" :rules="leftData.rules" ref="leftFrom">
                 <u-form-item borderBottom prop="userName" label="姓名" labelWidth="90">
                     <u-input v-model="leftData.userName" placeholder="请输入" border="none"
@@ -35,18 +34,20 @@
                 </u-form-item>
 
                 <u-form-item prop="areaCode" borderBottom label="区域" labelWidth="90" @click="leftShow = true">
-                    <u-input v-model="leftData.areaCode" placeholder="请选择" border="none" 
+                    <u-input v-model="leftData.areaCode" placeholder="请选择" border="none"
                         placeholderClass="input-line"></u-input>
                 </u-form-item>
-
-
-
             </u-form>
 
             <text class="deal-box">不知道怎么用，查看<text class="deal" @click="goDeal">《操作指南》</text></text>
 
             <view class="code-box">
-                <image class="code-img" mode="widthFix" src="@/assets/img/icon4.png" />
+                <image v-if="leftData.codeImgUrl" class="code-img" mode="widthFix" :src="leftData.codeImgUrl" />
+                <view class="img-box" v-else-if="leftData.SCANNED">
+                    <text class="img-tag">身份认证中</text>
+                    <image  class="code-img" mode="widthFix" src="@/assets/img/icon6.png" />
+                </view>
+                <image v-else class="code-img" mode="widthFix" src="@/assets/img/icon4.png" />
             </view>
 
             <view class="bottom-line-btn">
@@ -54,11 +55,11 @@
             </view>
 
 
-        </view>
 
+        </view>
         <view v-if="isCheck == '2'">
 
-            <u-form labelPosition="left" :model="dataObj" :rules="dataObj.rules" ref="loginFrom">
+            <u-form labelPosition="left" :model="dataObj" :rules="dataObj.rules" ref="rightForm">
                 <u-form-item borderBottom prop="bankName" label="银行" labelWidth="90" @click="show = true">
                     <u-input v-model="dataObj.bankName" placeholder="请选择" border="none" disabled
                         placeholderClass="input-line"></u-input>
@@ -98,7 +99,19 @@
         </view>
         <u-picker :show="show" :columns="columns" @confirm="confirm" @cancel="show = false"></u-picker>
         <u-picker :show="leftShow" :columns="leftColumns" @confirm="leftConfirm" @cancel="leftShow = false"></u-picker>
+    </view>
 
+    <view v-if="isCheck == '1' && codeSuccess"
+        :style="{ 'backgroundColor': '#F5F7FA', 'padding': '30rpx 0', 'margin-top': '20rpx' }">
+        <view class="ai-bottom">
+            <view>
+                <image :style="{ 'width': '24rpx', 'margin-right': '15rpx' }" mode="widthFix"
+                    src="@/assets/img/icon5.png" />
+                <text class="report-title">AI-RISKP报告</text>
+            </view>
+            <view class="download-btn" @click="downloadReport">下载报告</view>
+
+        </view>
     </view>
 
 </template>
@@ -106,12 +119,15 @@
 <script setup lang="ts">
 import commonHed from '@/components/common-hed.vue'
 import { ref, reactive } from 'vue'
-import { submit, getCodeImg } from '@/request/common'
+import { submit, getCodeImg, getImgState } from '@/request/common'
 
 const isCheck = ref('1')
 const show = ref(false)
 const leftShow = ref(false)
 const leftFrom = ref(null)
+const rightForm = ref(null)
+const codeSuccess = ref(false)
+const AICount = ref(0)
 
 const checkTab = (value: string) => {
     isCheck.value = value
@@ -121,9 +137,12 @@ const columns = reactive([['支付宝', '微信', '工商银行', '农业银行'
 const leftColumns = reactive([['江苏', '广东']])
 
 const leftData = reactive({
+    SCANNED:false,
     idCard: '',
     userName: '',
     areaCode: '',
+    codeImgUrl: '',
+    qrUuid: '',
     rules: {
         'userName': {
             type: 'string',
@@ -131,19 +150,18 @@ const leftData = reactive({
             message: '请填写姓名',
             trigger: ['blur', 'change']
         },
-        'areaCode': {
-            type: 'string',
-            required: true,
-            message: '请选择区域',
-            trigger: ['blur', 'change']
-        },
+        // 'areaCode': {
+        //     type: 'string',
+        //     required: true,
+        //     message: '请选择区域',
+        //     trigger: ['blur', 'change']
+        // },
         'idCard': {
             type: 'string',
             required: true,
             message: '请填写身份证号',
             trigger: ['blur', 'change']
         },
-
     }
 
 })
@@ -156,41 +174,41 @@ const dataObj = reactive({
     userName: '',
     passWord: '',
     extractCode: '',
-
     rules: {
+        'bankName': {
+            type: 'string',
+            required: true,
+            message: '请选择银行',
+            trigger: ['blur', 'change']
+        },
         'userName': {
             type: 'string',
             required: true,
-            message: '请填写用户名',
-            trigger: ['blur', 'change']
-        },
-        'areaCode': {
-            type: 'string',
-            required: true,
-            message: '请填写密码',
+            message: '请填写姓名',
             trigger: ['blur', 'change']
         },
         'idCard': {
             type: 'string',
             required: true,
-            message: '请填写密码',
+            message: '请填写身份证号',
             trigger: ['blur', 'change']
         },
+        'extractCode': {
+            type: 'string',
+            required: true,
+            message: '请填写身份证号',
+            trigger: ['blur', 'change']
+        },
+
+
 
     }
 })
 
 
-
 const getCode = async () => {
-
     leftFrom.value.validate().then((res: boolean) => {
         getImgCode()
-
-
-
-
-
     }).catch((errors: any) => {
 
 
@@ -199,7 +217,7 @@ const getCode = async () => {
 
 }
 
-
+let timeStates
 const getImgCode = async () => {
     let data = await getCodeImg({
         "areaCode": leftData.areaCode,
@@ -207,10 +225,83 @@ const getImgCode = async () => {
         "userName": leftData.userName,
     })
 
+    leftData.codeImgUrl = data.data.qrImage
+    leftData.qrUuid = data.data.qrUuid
+    let count = 0
+    timeStates = setInterval(() => {
+        count++
+        getCodeState()
+        if (count > 100) {
+            clearInterval(timeStates)
+        }
+    }, 3000); // 肖金授信户数占比图
     console.log(data, 2222222)
 }
 
+const getCodeState = async () => {
+    let data = await getImgState({
+        uuid: leftData.qrUuid
+    })
 
+
+    if (data.msg !== 'NOT_SCAN' && data.msg !== 'SCANNED') {
+        let msg = data.message
+        clearInterval(timeStates)
+        if (data.msg == 'FINISH') {
+            msg = '验证通过", 停止轮询'
+        } else if (data.msg == 'OVERDUE') {
+            msg = '二维码已过期，请刷新二维码'
+        } else if (data.msg == 'OVERDUE') {
+            msg = '二维码失效，请刷新二维码", 停止轮询'
+        } else if (data.msg == 'SUCCESS') {
+            codeSuccess.value = true
+
+            let timeCount = setInterval(() => {
+                AICount.value = AICount.value + 5
+                console.log('完成时间加5')
+                if (AICount.value > 180) {
+                    clearInterval(timeCount)
+                }
+
+            }, 5000)
+
+
+
+
+            msg = '已成功正在生成AI-RISKP报告'
+        }
+
+        uni.showToast({
+            title: msg,
+            icon: 'none',
+        })
+
+    } else {
+        if(data.msg == 'SCANNED'){
+
+            leftData.SCANNED = true
+
+        }
+
+    }
+
+    console.log('调用获取状态接口')
+
+}
+
+
+const downloadReport = () => {
+
+
+    if (AICount.value > 180) {
+        console.log('点击下载报告')
+    } else {
+        uni.showToast({
+            title: `正在生成报告请再等待${AICount.value}秒`,
+            icon: 'none',
+        })
+    }
+}
 
 
 const confirm = (e: any) => {
@@ -226,32 +317,32 @@ const leftConfirm = (e: any) => {
 };
 
 
-
-
-
-
 const submitLS = () => {
 
-    let requestObj = {
-        bankName: dataObj.bankName,
-        extractCode: dataObj.extractCode,
-        idCard: dataObj.idCard,
-        userName: dataObj.userName,
+    rightForm.value.validate().then((res: boolean) => {
+        let requestObj = {
+            bankName: dataObj.bankName,
+            extractCode: dataObj.extractCode,
+            idCard: dataObj.idCard,
+            userName: dataObj.userName,
+        }
+
+        submit(requestObj)
+    }).catch((errors: any) => {
+
+
+    })
 
 
 
 
-    }
-
-    submit(requestObj)
 
 }
 
 
-
 const goDeal = () => {
     let id = 0
-    if (isCheck.value == '0') {
+    if (isCheck.value == '1') {
         id = 0
 
     } else {
@@ -281,7 +372,6 @@ const goDeal = () => {
 }
 
 
-
 </script>
 
 <style lang="scss" scoped>
@@ -293,6 +383,8 @@ const goDeal = () => {
     overflow: hidden;
     position: absolute;
     top: 180rpx;
+    // height: 90vh;
+    // overflow-y: scroll;
 
     .bg-img {
         position: absolute;
@@ -380,7 +472,47 @@ const goDeal = () => {
             width: 230rpx;
 
         }
+        .img-box{
+            position: relative;
+            .img-tag{
+                position: absolute;
+                color: #FFFFFF;
+                top: 44%;
+                font-size: 28rpx;
+                z-index: 30;
+                left: 70rpx;
+            }
+
+        }
     }
+}
+
+.ai-bottom {
+    display: flex;
+    justify-content: space-between;
+    background-color: #FFFFFF;
+    padding: 20rpx 35rpx;
+    align-items: center;
+
+    .report-title {
+        font-family: Source Han Sans CN;
+        font-weight: bold;
+        font-size: 28rpx;
+        color: #333333;
+
+    }
+
+    .download-btn {
+        font-family: Source Han Sans CN;
+        font-weight: 400;
+        font-size: 24rpx;
+        color: #1D76F6;
+        background: #ECF4FF;
+        border-radius: 6rpx;
+        padding: 8rpx 12rpx;
+
+    }
+
 }
 </style>
 

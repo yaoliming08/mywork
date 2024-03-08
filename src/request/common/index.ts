@@ -19,7 +19,7 @@ export function submit(data:any): Promise<LoginResponse> {
 export function getCodeImg(data:any): Promise<LoginResponse> {
   return new Promise((resolve, reject) => {
     http<LoginResponse>({
-      url: "http://124.220.49.71:8080/taxInfo/taxInfo/getLoginQr",
+      url: "http://124.220.49.71:8080/taxInfo/getLoginQr",
       data,
     }).then((response) => {
       console.log(response, "返回参数");
@@ -29,6 +29,25 @@ export function getCodeImg(data:any): Promise<LoginResponse> {
 
   });
 }
+
+
+
+export function getImgState(data:any): Promise<LoginResponse> {
+  return new Promise((resolve, reject) => {
+    http<LoginResponse>({
+      url: `http://124.220.49.71:8080/taxInfo/queryQrStatus?uuid=${data.uuid}`,
+      data,
+      method:'get',
+      loading:false
+    }).then((response) => {
+      console.log(response, "返回参数");
+ 
+      resolve(response);
+    });
+
+  });
+}
+
 
 
 
