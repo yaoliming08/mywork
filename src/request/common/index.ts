@@ -37,7 +37,7 @@ export function getImgState(data:any): Promise<LoginResponse> {
     http<LoginResponse>({
       url: `http://124.220.49.71:8080/taxInfo/queryQrStatus?uuid=${data.uuid}`,
       data,
-      method:'get',
+      method:'GET',
       loading:false
     }).then((response) => {
       console.log(response, "返回参数");

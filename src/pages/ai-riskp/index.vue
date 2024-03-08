@@ -217,7 +217,7 @@ const getCode = async () => {
 
 }
 
-let timeStates
+let timeStates:any
 const getImgCode = async () => {
     let data = await getCodeImg({
         "areaCode": leftData.areaCode,

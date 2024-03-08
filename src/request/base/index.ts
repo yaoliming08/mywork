@@ -25,7 +25,6 @@ export function http<T = any>(params: HttpParams): Promise<T> {
       ...requestConfig,
       header: { "content-type": "application/x-www-form-urlencoded" },
       success: (res: any) => {
-        console.l
         uni.hideLoading()
         if (res.data.code == 200) {
           resolve(res.data);
