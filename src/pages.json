@@ -7,6 +7,7 @@
   "pages": [
     {
       "path": "pages/ai-riskp/index",
+      "lazyCodeLoading": "requiredComponents",
       "style": {
         "navigationBarTitleText": "",
         "disableScroll": true
@@ -14,6 +15,7 @@
     },
     {
       "path": "pages/login/index",
+      "lazyCodeLoading": "requiredComponents",
       "style": {
         "navigationBarTitleText": "",
         "disableScroll": true
@@ -23,13 +25,12 @@
   ],
   "subPackages": [
     {
-      "root": "pages/sunPack",
+      "root": "sunPack",
       "pages": [    {
         "path": "instructions/index",
         "style": {
           "navigationBarTitleText": "",
-          "disableScroll": true,
-          "navigationStyle":"default"
+          "disableScroll": true
         }
       }
 

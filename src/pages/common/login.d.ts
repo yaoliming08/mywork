@@ -6,7 +6,8 @@ interface LoginResponse {
   sessionKey: string
   refreshToken:string,
   imId:string,
-  imName:string
+  imName:string,
+  msg:string
 }
 
 

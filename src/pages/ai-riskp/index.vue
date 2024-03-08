@@ -27,7 +27,7 @@
                 </u-form-item>
 
                 <u-form-item prop="areaCode" borderBottom label="区域" labelWidth="90" @click="leftShow = true">
-                    <u-input v-model="leftData.areaCode" placeholder="请选择" border="none"
+                    <u-input v-model="leftData.areaCode" placeholder="请选择" border="none" disabled
                         placeholderClass="input-line"></u-input>
                 </u-form-item>
             </u-form>
@@ -36,7 +36,7 @@
                 <image v-if="leftData.codeImgUrl" class="code-img" mode="widthFix" :src="leftData.codeImgUrl" />
                 <view class="img-box" v-else-if="leftData.SCANNED">
                     <text class="img-tag">身份认证中</text>
-                    <image  class="code-img" mode="widthFix" src="@/assets/img/icon6.png" />
+                    <image class="code-img" mode="widthFix" src="@/assets/img/icon6.png" />
                 </view>
                 <image v-else class="code-img" mode="widthFix" src="@/assets/img/icon4.png" />
             </view>
@@ -89,10 +89,11 @@
         </view>
     </view>
 </template>
+
 <script setup lang="ts">
 import commonHed from '@/components/common-hed.vue'
 import { ref, reactive } from 'vue'
-import { submit, getCodeImg, getImgState } from '@/request/common'
+import { submit, getCodeImg, getImgState, downLoad } from '@/request/common'
 const isCheck = ref('1')
 const show = ref(false)
 const leftShow = ref(false)
@@ -109,7 +110,7 @@ const columns = reactive([['支付宝', '微信', '工商银行', '农业银行'
 const leftColumns = reactive([['江苏', '广东']])
 
 const leftData = reactive({
-    SCANNED:false,
+    SCANNED: false,
     idCard: '',
     userName: '',
     areaCode: '',
@@ -179,7 +180,7 @@ const getCode = async () => {
     })
 }
 
-let timeStates:any
+let timeStates: any
 const getImgCode = async () => {
     let data = await getCodeImg({
         "areaCode": leftData.areaCode,
@@ -237,7 +238,7 @@ const getCodeState = async () => {
         })
 
     } else {
-        if(data.msg == 'SCANNED'){
+        if (data.msg == 'SCANNED') {
 
             leftData.SCANNED = true
 
@@ -253,8 +254,37 @@ const getCodeState = async () => {
 const downloadReport = () => {
 
 
-    if (AICount.value > 180) {
+    if (AICount.value > 180 ) {
         console.log('点击下载报告')
+
+        uni.downloadFile({
+            url: `http://124.220.49.71:8080/taxInfo/queryReport?serialNo=${leftData.qrUuid}`, // 文件地址
+            success: (res) => {
+                console.log(res,11111111111)
+                if (res.statusCode === 200) {
+                    console.log('下载成功');
+                    uni.saveFile({
+                        tempFilePath: res.tempFilePath, // 临时文件路径
+                        success: (saveRes) => {
+                            console.log('保存成功', saveRes);
+                        },
+                        fail: (saveErr) => {
+                            console.log('保存失败', saveErr);
+                        }
+                    });
+                } else {
+                    console.log('下载失败');
+                }
+            },
+            fail: (err) => {
+                console.log('下载失败', err);
+            }
+        });
+
+
+
+
+
     } else {
         uni.showToast({
             title: `正在生成报告请再等待${AICount.value}秒`,
@@ -279,19 +309,35 @@ const leftConfirm = (e: any) => {
 
 const submitLS = () => {
 
-    rightForm.value.validate().then((res: boolean) => {
-        let requestObj = {
-            bankName: dataObj.bankName,
-            extractCode: dataObj.extractCode,
-            idCard: dataObj.idCard,
-            userName: dataObj.userName,
-        }
+    if (leftData.qrUuid) {
+        rightForm.value.validate().then((res: boolean) => {
+            let requestObj = {
+                bankName: dataObj.bankName,
+                extractCode: dataObj.extractCode,
+                idCard: dataObj.idCard,
+                userName: dataObj.userName,
+                serialNo: leftData.qrUuid
+            }
 
-        submit(requestObj)
-    }).catch((errors: any) => {
+            submit(requestObj)
+        }).catch((errors: any) => {
 
 
-    })
+        })
+
+
+    } else {
+
+        uni.showToast({
+            title: `先完成税务收入`,
+            icon: 'none',
+        })
+
+    }
+
+
+
+
 
 
 
@@ -327,7 +373,7 @@ const goDeal = () => {
 
 
     uni.navigateTo({
-        url: `/instructions/index?id=${id}`,
+        url: `/sunPack/instructions/index?id=${id}`,
     })
 }
 
@@ -432,9 +478,11 @@ const goDeal = () => {
             width: 230rpx;
 
         }
-        .img-box{
+
+        .img-box {
             position: relative;
-            .img-tag{
+
+            .img-tag {
                 position: absolute;
                 color: #FFFFFF;
                 top: 44%;
