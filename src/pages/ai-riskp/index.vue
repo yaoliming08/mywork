@@ -33,11 +33,14 @@
             </u-form>
             <text class="deal-box">不知道怎么用，查看<text class="deal" @click="goDeal">《操作指南》</text></text>
             <view class="code-box">
-                <image v-if="leftData.codeImgUrl" class="code-img" mode="widthFix" :src="leftData.codeImgUrl" />
-                <view class="img-box" v-else-if="leftData.SCANNED">
-                    <text class="img-tag">身份认证中</text>
+                <view class="img-box" v-if="leftData.SCANNED">
+                    <text class="img-tag" v-if="leftData.msg == 'NOT_SCAN'">身份认证中</text>
+                    <text class="img-tag" v-if="leftData.msg == 'FINISH'">验证成功</text>
+                    <text class="img-tag" v-if="leftData.msg == 'SUCCESS'">验证成功</text>
                     <image class="code-img" mode="widthFix" src="@/assets/img/icon6.png" />
                 </view>
+                <image v-else-if="leftData.codeImgUrl" class="code-img" mode="widthFix" :src="leftData.codeImgUrl" />
+        
                 <image v-else class="code-img" mode="widthFix" src="@/assets/img/icon4.png" />
             </view>
 
@@ -100,7 +103,7 @@ const leftShow = ref(false)
 const leftFrom = ref(null)
 const rightForm = ref(null)
 const codeSuccess = ref(false)
-const AICount = ref(0)
+const AICount = ref(180)
 
 const checkTab = (value: string) => {
     isCheck.value = value
@@ -111,6 +114,7 @@ const leftColumns = reactive([['江苏', '广东']])
 
 const leftData = reactive({
     SCANNED: false,
+    msg:'',
     idCard: '',
     userName: '',
     areaCode: '',
@@ -205,6 +209,8 @@ const getCodeState = async () => {
         uuid: leftData.qrUuid
     })
 
+    leftData.msg = data.msg
+
     if (data.msg !== 'NOT_SCAN' && data.msg !== 'SCANNED') {
         let msg = data.message
         clearInterval(timeStates)
@@ -218,9 +224,9 @@ const getCodeState = async () => {
             codeSuccess.value = true
 
             let timeCount = setInterval(() => {
-                AICount.value = AICount.value + 5
+                AICount.value = AICount.value - 5
                 console.log('完成时间加5')
-                if (AICount.value > 180) {
+                if (AICount.value < 0) {
                     clearInterval(timeCount)
                 }
 
@@ -254,7 +260,7 @@ const getCodeState = async () => {
 const downloadReport = () => {
 
 
-    if (AICount.value > 180 ) {
+    if (AICount.value < 0 ) {
         console.log('点击下载报告')
 
         uni.downloadFile({
