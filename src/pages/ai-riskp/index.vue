@@ -40,7 +40,7 @@
                     <image class="code-img" mode="widthFix" src="@/assets/img/icon6.png" />
                 </view>
                 <image v-else-if="leftData.codeImgUrl" class="code-img" mode="widthFix" :src="leftData.codeImgUrl" />
-        
+
                 <image v-else class="code-img" mode="widthFix" src="@/assets/img/icon4.png" />
             </view>
 
@@ -79,8 +79,7 @@
         <u-picker :show="show" :columns="columns" @confirm="confirm" @cancel="show = false"></u-picker>
         <u-picker :show="leftShow" :columns="leftColumns" @confirm="leftConfirm" @cancel="leftShow = false"></u-picker>
     </view>
-    <view v-if="isCheck == '1' && codeSuccess"
-        :style="{ 'backgroundColor': '#F5F7FA', 'padding': '30rpx 0', 'margin-top': '20rpx' }">
+    <view v-if="isCheck == '1' && codeSuccess"  :style="{ 'backgroundColor': '#F5F7FA', 'padding': '30rpx 0', 'margin-top': '20rpx' }">
         <view class="ai-bottom">
             <view>
                 <image :style="{ 'width': '24rpx', 'margin-right': '15rpx' }" mode="widthFix"
@@ -114,7 +113,7 @@ const leftColumns = reactive([['江苏', '广东']])
 
 const leftData = reactive({
     SCANNED: false,
-    msg:'',
+    msg: '',
     idCard: '',
     userName: '',
     areaCode: '',
@@ -260,19 +259,45 @@ const getCodeState = async () => {
 const downloadReport = () => {
 
 
-    if (AICount.value < 0 ) {
-        console.log('点击下载报告')
-
+    if (AICount.value < 0  ) {
+        console.log('点击下载报告', `https://miniprogram.lixuepeng.cn/prod-api/taxInfo/exportReport?serialNo=202403=${leftData.qrUuid}`)
+        // let filePath = uni.env.USER_DATA_PATH+'/'+ decodeURIComponent(getFileNameByPath(attachLink))
         uni.downloadFile({
-            url: `http://124.220.49.71:8080/taxInfo/queryReport?serialNo=${leftData.qrUuid}`, // 文件地址
+            url: `https://miniprogram.lixuepeng.cn/prod-api/taxInfo/exportReport?serialNo=202403=${leftData.qrUuid}`, // 文件地址
             success: (res) => {
-                console.log(res,11111111111)
+                console.log(res, 11111111111)
                 if (res.statusCode === 200) {
                     console.log('下载成功');
-                    uni.saveFile({
+
+
+                    uni.getFileSystemManager().saveFile({
                         tempFilePath: res.tempFilePath, // 临时文件路径
+                        filePath: uni.env.USER_DATA_PATH + "/" + `税务收入报告${Date.now()}.xlsx`, // fileName 需要
                         success: (saveRes) => {
-                            console.log('保存成功', saveRes);
+                            console.log('保存成功', saveRes, saveRes.savedFilePath);
+
+                            uni.openDocument({
+                                filePath: saveRes.savedFilePath,
+                                showMenu: true, //是否可以分享
+                                fileType: 'xlsx',
+                                fileName:'wwwwwwwwwwww',
+                                success: (res) => {
+                                    uni.hideLoading()
+                                    console.log(res, 1111111111);
+                                },
+                                fail: (e) => {
+                                    console.log(e, 887)
+                                    uni.showToast({
+                                        title: '打开失败',
+                                        icon: "error"
+                                    })
+                                }
+                            })
+
+
+
+
+
                         },
                         fail: (saveErr) => {
                             console.log('保存失败', saveErr);
