@@ -29,7 +29,7 @@
           <view class="bottom-line">
             <image class="img" mode="widthFix" src="@/assets/img/icon3.png" />
 
-            <u-input v-model="dataObj.password" placeholder="请输入密码" border="none"
+            <u-input v-model="dataObj.password" placeholder="请输入密码" border="none" password="true"
               placeholderClass="input-line"></u-input>
 
           </view>

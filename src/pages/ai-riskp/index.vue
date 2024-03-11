@@ -22,8 +22,8 @@
                 </u-form-item>
 
                 <u-form-item prop="idCard" borderBottom label="身份证号" labelWidth="90">
-                    <u-input v-model="leftData.idCard" placeholder="请输入" border="none"
-                        placeholderClass="input-line"></u-input>
+                    <up-input v-model="leftData.idCard" placeholder="请输入" border="none"
+                        placeholderClass="input-line"></up-input>
                 </u-form-item>
 
                 <u-form-item prop="areaCode" borderBottom label="区域" labelWidth="90" @click="leftShow = true">
@@ -79,7 +79,8 @@
         <u-picker :show="show" :columns="columns" @confirm="confirm" @cancel="show = false"></u-picker>
         <u-picker :show="leftShow" :columns="leftColumns" @confirm="leftConfirm" @cancel="leftShow = false"></u-picker>
     </view>
-    <view v-if="isCheck == '1' && codeSuccess"  :style="{ 'backgroundColor': '#F5F7FA', 'padding': '30rpx 0', 'margin-top': '20rpx' }">
+    <view v-if="isCheck == '1' && codeSuccess"
+        :style="{ 'backgroundColor': '#F5F7FA', 'padding': '30rpx 0', 'margin-top': '20rpx' }">
         <view class="ai-bottom">
             <view>
                 <image :style="{ 'width': '24rpx', 'margin-right': '15rpx' }" mode="widthFix"
@@ -126,12 +127,22 @@ const leftData = reactive({
             message: '请填写姓名',
             trigger: ['blur', 'change']
         },
-        'idCard': {
+        'idCard': [{
             type: 'string',
             required: true,
             message: '请填写身份证号',
             trigger: ['blur', 'change']
-        },
+        }, {
+            // 自定义验证函数
+            validator: (rule, value, callback) => {
+                return uni.$u.test.idCard(value)
+            },
+            message: '身份证不正确',
+            // 触发器可以同时用blur和change
+            trigger: ['blur'],
+        }]
+
+
     }
 
 })
@@ -157,16 +168,24 @@ const dataObj = reactive({
             message: '请填写姓名',
             trigger: ['blur', 'change']
         },
-        'idCard': {
+        'idCard': [{
             type: 'string',
             required: true,
             message: '请填写身份证号',
             trigger: ['blur', 'change']
-        },
+        },{
+            // 自定义验证函数
+            validator: (rule, value, callback) => {
+                return uni.$u.test.idCard(value)
+            },
+            message: '身份证不正确',
+            // 触发器可以同时用blur和change
+            trigger: ['blur'],
+        }],
         'extractCode': {
             type: 'string',
             required: true,
-            message: '请填写身份证号',
+            message: '请填写提取码',
             trigger: ['blur', 'change']
         },
 
@@ -259,7 +278,7 @@ const getCodeState = async () => {
 const downloadReport = () => {
 
 
-    if (AICount.value < 0  ) {
+    if (AICount.value < 0) {
         console.log('点击下载报告', `https://miniprogram.lixuepeng.cn/prod-api/taxInfo/exportReport?serialNo=202403=${leftData.qrUuid}`)
         // let filePath = uni.env.USER_DATA_PATH+'/'+ decodeURIComponent(getFileNameByPath(attachLink))
         uni.downloadFile({
@@ -280,7 +299,6 @@ const downloadReport = () => {
                                 filePath: saveRes.savedFilePath,
                                 showMenu: true, //是否可以分享
                                 fileType: 'xlsx',
-                                fileName:'wwwwwwwwwwww',
                                 success: (res) => {
                                     uni.hideLoading()
                                     console.log(res, 1111111111);
