@@ -63,7 +63,7 @@
                         placeholderClass="input-line"></u-input>
                 </u-form-item>
                 <u-form-item prop="em" borderBottom label="发送邮箱" labelWidth="90">
-                    <u-input v-model="dataObj.emie" placeholder="152236546@qq.com" border="none" disabled
+                    <u-input v-model="dataObj.emie" placeholder="18356092014@163.com" border="none" disabled
                         placeholderClass="input-line"></u-input>
                 </u-form-item>
                 <u-form-item prop="extractCode" borderBottom label="提取码" labelWidth="90">
