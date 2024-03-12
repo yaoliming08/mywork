@@ -104,6 +104,7 @@ const leftFrom = ref(null)
 const rightForm = ref(null)
 const codeSuccess = ref(false)
 const AICount = ref(180)
+console.log('改动提交')
 
 const checkTab = (value: string) => {
     isCheck.value = value
