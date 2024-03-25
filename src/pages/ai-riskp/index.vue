@@ -34,9 +34,11 @@
             <text class="deal-box">不知道怎么用，查看<text class="deal" @click="goDeal">《操作指南》</text></text>
             <view class="code-box">
                 <view class="img-box" v-if="leftData.SCANNED">
-                    <text class="img-tag" v-if="leftData.msg == 'NOT_SCAN'">身份认证中</text>
-                    <text class="img-tag" v-if="leftData.msg == 'FINISH'">验证成功</text>
+                    <text class="img-tag" v-if="leftData.msg == 'SCANNED'">身份认证中...</text>
+                    <text class="img-tag" v-if="leftData.msg == 'FINISH'">验证通过</text>
                     <text class="img-tag" v-if="leftData.msg == 'SUCCESS'">验证成功</text>
+                    <text class="img-tag" v-if="leftData.msg == 'OVERDUE'" :style="{ 'left': 0 }">二维码已过期，请重新获取二维码</text>
+                    <text class="img-tag" v-if="leftData.msg == 'ERROR'" :style="{ 'left': 0 }">二维码失效，请重新获取二维码</text>
                     <image class="code-img" mode="widthFix" src="@/assets/img/icon6.png" />
                 </view>
                 <image v-else-if="leftData.codeImgUrl" class="code-img" mode="widthFix" :src="leftData.codeImgUrl" />
@@ -79,8 +81,7 @@
         <u-picker :show="show" :columns="columns" @confirm="confirm" @cancel="show = false"></u-picker>
         <u-picker :show="leftShow" :columns="leftColumns" @confirm="leftConfirm" @cancel="leftShow = false"></u-picker>
     </view>
-    <view v-if="isCheck == '1' && codeSuccess"
-        :style="{ 'backgroundColor': '#F5F7FA', 'padding': '30rpx 0', 'margin-top': '20rpx' }">
+    <view v-if="codeSuccess" :style="{ 'backgroundColor': '#F5F7FA', 'padding': '30rpx 0', 'margin-top': '20rpx' }">
         <view class="ai-bottom">
             <view>
                 <image :style="{ 'width': '24rpx', 'margin-right': '15rpx' }" mode="widthFix"
@@ -103,14 +104,13 @@ const leftShow = ref(false)
 const leftFrom = ref(null)
 const rightForm = ref(null)
 const codeSuccess = ref(false)
-const AICount = ref(180)
-console.log('改动提交')
+const AICount = ref(60)
 
 const checkTab = (value: string) => {
     isCheck.value = value
 }
 
-const columns = reactive([['支付宝', '微信', '工商银行', '农业银行', '建设银行', '交通银行', '招商银行']])
+const columns = reactive([['支付宝', '微信', '工商银行', '农业银行', '建设银行', '招商银行']])
 const leftColumns = reactive([['江苏', '广东']])
 
 const leftData = reactive({
@@ -152,6 +152,7 @@ const dataObj = reactive({
     showSex: false,
     bankName: '',
     emie: '',
+    serialNo: '',
     idCard: '',
     userName: '',
     passWord: '',
@@ -174,7 +175,7 @@ const dataObj = reactive({
             required: true,
             message: '请填写身份证号',
             trigger: ['blur', 'change']
-        },{
+        }, {
             // 自定义验证函数
             validator: (rule, value, callback) => {
                 return uni.$u.test.idCard(value)
@@ -205,10 +206,12 @@ const getCode = async () => {
 
 let timeStates: any
 const getImgCode = async () => {
+    leftData.SCANNED = false
     let data = await getCodeImg({
-        "areaCode": leftData.areaCode,
+        "regionCode": leftData.areaCode == '江苏' ? 'JS' : 'GD',
         "idCard": leftData.idCard,
         "userName": leftData.userName,
+        'serialNo': dataObj.serialNo
     })
 
     leftData.codeImgUrl = data.data.qrImage
@@ -225,13 +228,15 @@ const getImgCode = async () => {
 
 const getCodeState = async () => {
     let data = await getImgState({
+
         uuid: leftData.qrUuid
     })
 
     leftData.msg = data.msg
 
-    if (data.msg !== 'NOT_SCAN' && data.msg !== 'SCANNED') {
+    if (data.msg !== 'NOT_SCAN') {
         let msg = data.message
+        leftData.SCANNED = true
         clearInterval(timeStates)
         if (data.msg == 'FINISH') {
             msg = '验证通过", 停止轮询'
@@ -240,34 +245,27 @@ const getCodeState = async () => {
         } else if (data.msg == 'OVERDUE') {
             msg = '二维码失效，请刷新二维码", 停止轮询'
         } else if (data.msg == 'SUCCESS') {
-            codeSuccess.value = true
 
-            let timeCount = setInterval(() => {
-                AICount.value = AICount.value - 5
-                console.log('完成时间加5')
-                if (AICount.value < 0) {
-                    clearInterval(timeCount)
-                }
+            if (!codeSuccess.value) {
+                codeSuccess.value = true
+                let timeCount = setInterval(() => {
+                    AICount.value = AICount.value - 1
+                    if (AICount.value < 0) {
+                        clearInterval(timeCount)
+                    }
 
-            }, 5000)
+                }, 1000)
 
-
-
+            }
 
             msg = '已成功正在生成AI-RISKP报告'
+            // 815403
         }
 
-        uni.showToast({
-            title: msg,
-            icon: 'none',
-        })
-
-    } else {
-        if (data.msg == 'SCANNED') {
-
-            leftData.SCANNED = true
-
-        }
+        // uni.showToast({
+        //     title: msg,
+        //     icon: 'none',
+        // })
 
     }
 
@@ -279,11 +277,14 @@ const getCodeState = async () => {
 const downloadReport = () => {
 
 
-    if (AICount.value < 0) {
-        console.log('点击下载报告', `https://miniprogram.lixuepeng.cn/prod-api/taxInfo/exportReport?serialNo=202403=${leftData.qrUuid}`)
+    if (AICount.value < 0 || isCheck.value == '2' ) {
+
+        let serialNo = leftData.qrUuid || dataObj.serialNo
+
+        console.log('点击下载报告', `https://miniprogram.lixuepeng.cn/prod-api/taxInfo/exportReport?serialNo=${serialNo}`)
         // let filePath = uni.env.USER_DATA_PATH+'/'+ decodeURIComponent(getFileNameByPath(attachLink))
         uni.downloadFile({
-            url: `https://miniprogram.lixuepeng.cn/prod-api/taxInfo/exportReport?serialNo=202403=${leftData.qrUuid}`, // 文件地址
+            url: `https://miniprogram.lixuepeng.cn/prod-api/taxInfo/exportReport?serialNo=${serialNo}`, // 文件地址
             success: (res) => {
                 console.log(res, 11111111111)
                 if (res.statusCode === 200) {
@@ -358,32 +359,49 @@ const leftConfirm = (e: any) => {
 
 
 const submitLS = () => {
+    console.log('流水提交')
 
-    if (leftData.qrUuid) {
-        rightForm.value.validate().then((res: boolean) => {
-            let requestObj = {
-                bankName: dataObj.bankName,
-                extractCode: dataObj.extractCode,
-                idCard: dataObj.idCard,
-                userName: dataObj.userName,
-                serialNo: leftData.qrUuid
-            }
+    rightForm.value.validate().then(async (res: boolean) => {
+        let requestObj = {
+            bankName: dataObj.bankName,
+            extractCode: dataObj.extractCode,
+            idCard: dataObj.idCard,
+            userName: dataObj.userName,
+            serialNo: leftData.qrUuid
+        }
 
-            submit(requestObj)
-        }).catch((errors: any) => {
+        let resObj = await submit(requestObj)
+
+        dataObj.serialNo = resObj.data.serialNo
+
+        if (!codeSuccess.value) {
+            codeSuccess.value = true
+            // let timeCount = setInterval(() => {
+            //     AICount.value = AICount.value - 5
+            //     console.log('完成时间加5')
+            //     if (AICount.value < 0) {
+            //         clearInterval(timeCount)
+            //     }
+
+            // }, 5000)
+
+        }
+
+        console.log(resObj, 11111)
+
+        if (resObj.code == 200) {
+            uni.showToast({
+                title: `流水采集成功`,
+                icon: 'none',
+            })
+
+        }
+    }).catch((errors: any) => {
 
 
-        })
+    })
 
 
-    } else {
-
-        uni.showToast({
-            title: `先完成税务收入`,
-            icon: 'none',
-        })
-
-    }
 
 
 
@@ -394,6 +412,9 @@ const submitLS = () => {
 
 
 }
+
+
+console.log('815403')
 
 
 const goDeal = () => {
@@ -476,6 +497,7 @@ const goDeal = () => {
             position: absolute;
             z-index: 10;
 
+
         }
 
         .reversalImg {
@@ -525,20 +547,23 @@ const goDeal = () => {
         padding: 50rpx 0;
 
         .code-img {
-            width: 230rpx;
+            width: 300rpx;
 
         }
 
         .img-box {
             position: relative;
 
+
             .img-tag {
                 position: absolute;
                 color: #FFFFFF;
                 top: 44%;
-                font-size: 28rpx;
+                font-size: 24rpx;
                 z-index: 30;
-                left: 70rpx;
+                left: 100rpx;
+                text-align: center;
+
             }
 
         }

@@ -37,19 +37,6 @@
       }
 
     ]
-    },
-    {
-      "root": "me",
-      "pages": [  {
-        "path": "my-resume/index",
-        "lazyCodeLoading": "requiredComponents",
-        "style": {
-          "navigationBarTitleText": "",
-          "disableScroll": true
-        }
-      }
-
-    ]
     }
 
 

@@ -4,6 +4,7 @@ interface requestResponse {
     data:{
         qrImage:string,
         qrUuid:string,
+        serialNo:string
     }
   }
   
