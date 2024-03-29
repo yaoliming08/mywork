@@ -52,6 +52,7 @@
     "@dcloudio/uni-mp-weixin": "3.0.0-alpha-4000120240201002",
     "@dcloudio/uni-mp-xhs": "3.0.0-alpha-4000120240201002",
     "@dcloudio/uni-quickapp-webview": "3.0.0-alpha-4000120240201002",
+    "@qiun/ucharts": "^2.5.0-20230101",
     "@rongcloud/imlib-v4": "^4.6.4",
     "@types/lodash.once": "^4.1.7",
     "@types/node": "^18.11.9",

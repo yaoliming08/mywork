@@ -1,5 +1,6 @@
 <template>
-    <commonHed />
+    <view class="ai-riskp-box">
+        <commonHed />
     <view class="ai-table">
         <image class="bg-img" mode="widthFix" src="@/assets/img/bg3.png" :style="{ 'width': '750rpx' }" />
         <view class="table-line" :class="{ 'isCheck': isCheck === '1' }" @click="checkTab('1')">
@@ -92,6 +93,19 @@
 
         </view>
     </view>
+    </view>
+      
+
+    <u-tabbar
+	:value="tabValue"
+	@change="tabChange"
+	:fixed="true"
+	:placeholder="false"
+	:safeAreaInsetBottom="false"
+>
+	<u-tabbar-item text="信息采集" icon="home" @click="tabClick" name="/pages/ai-riskp/index"></u-tabbar-item>
+	<u-tabbar-item text="查看报告" icon="photo" @click="tabClick" name="/pages/report-page/index" ></u-tabbar-item>
+</u-tabbar>
 </template>
 
 <script setup lang="ts">
@@ -105,6 +119,22 @@ const leftFrom = ref(null)
 const rightForm = ref(null)
 const codeSuccess = ref(false)
 const AICount = ref(60)
+const tabValue = ref('/pages/ai-riskp/index')
+
+const tabClick = (e)=>{
+    tabValue.value = e
+    console.log('tabLine点击',e)
+
+    uni.navigateTo({
+      url: e
+    });
+
+}
+
+const tabChange = (e)=>{
+    console.log(e,1111111111)
+
+}
 
 const checkTab = (value: string) => {
     isCheck.value = value
@@ -300,7 +330,7 @@ const downloadReport = () => {
                             uni.openDocument({
                                 filePath: saveRes.savedFilePath,
                                 showMenu: true, //是否可以分享
-                                fileType: 'xlsx',
+                                fileType: 'pdf',
                                 success: (res) => {
                                     uni.hideLoading()
                                     console.log(res, 1111111111);
@@ -452,6 +482,14 @@ const goDeal = () => {
 </script>
 
 <style lang="scss" scoped>
+
+
+.ai-riskp-box{
+
+}
+
+
+
 .ai-table {
 
     display: flex;
@@ -460,8 +498,9 @@ const goDeal = () => {
     overflow: hidden;
     position: absolute;
     top: 180rpx;
-    // height: 90vh;
-    // overflow-y: scroll;
+    padding-bottom: 100prx;
+
+
 
     .bg-img {
         position: absolute;
@@ -524,7 +563,7 @@ const goDeal = () => {
 
 .ai-table-box {
     margin-top: 40rpx;
-    padding: 0 35rpx;
+    padding: 0 35rpx 60rpx;
 
     .deal-box {
         color: #999999;
@@ -608,4 +647,6 @@ const goDeal = () => {
     margin-bottom: 20rpx;
 
 }
+
+
 </style>
