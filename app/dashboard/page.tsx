@@ -19,6 +19,12 @@ const Home = () => {
       console.error('Error fetching data:', error)
     }
   }
+
+
+
+
+
+  
  
   return (
     <div className="flex">
