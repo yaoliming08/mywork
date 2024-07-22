@@ -8,7 +8,7 @@ const pool = mysql.createPool({
   port:'13887',
   user: 'root',
   password: 'Kjteck@UTdkPD_123', // 密码
-  database: 'dseg_cd',
+  database: 'dseg_kj',
 })
  
 export async function GET(request:any) {
@@ -16,9 +16,23 @@ export async function GET(request:any) {
   try {
     // 从连接池中获取连接
     const connection = await pool.getConnection()
- 
+
     // 执行 MySQL 查询
-    const [rows, fields] = await connection.query('SELECT * FROM apply_assure')
+    // const [rows, fields] = await connection.query('SELECT * FROM apply_assure')
+
+
+    const [rows, fields] = await connection.query('SELECT * FROM dseg_dict_type')
+
+    // SELECT b.CODE AS code,b.NAME AS name,b.ORDER_INDEX AS orderIndex,a.ENTRYCODE_TYPE as entryCodeType
+		// FROM dseg_dict_type a LEFT JOIN dseg_dict_entry b ON a.ID=b.DICT_TYPE_ID
+    
+
+		// WHERE a.DEL_FLAG=0 AND b.DEL_FLAG=0 AND a.CODE='INDUSTRY.CATEGORY' 
+		// and  a.AREA_CODE = '11010998'
+		// order by b.ORDER_INDEX
+
+
+   
  
     // 释放连接回连接池
     connection.release()

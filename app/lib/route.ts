@@ -14,6 +14,8 @@ export async function GET(request:any) {
   try {
     // 从连接池中获取连接
     const connection = await pool.getConnection()
+
+    console.log('尝试获取数据')
  
     // 执行 MySQL 查询
     const [rows, fields] = await connection.query('SELECT * FROM jacksonblogbacked')
