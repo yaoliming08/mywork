@@ -59,9 +59,15 @@ import { solveList } from "@/assets/js/home.js";
       margin-bottom: 15px;
       position: relative;
       cursor: pointer;
-      // &:hover {
-      //   transform: scale(1.1);
-      // }
+      overflow: hidden;
+      img{
+        width: 100%;
+        height: 100%;
+        &:hover {
+        transform: scale(1.5);
+      }
+      }
+
 
       img {
         width: 100%;

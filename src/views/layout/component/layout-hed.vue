@@ -214,6 +214,8 @@ if (token ) {
     .layout-hed-right {
       display: flex;
       align-items: center;
+      justify-content: space-between;
+      width: 800px;
       :deep(.el-tooltip__trigger:focus-visible) {
             outline: unset;
         }
