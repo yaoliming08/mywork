@@ -1,0 +1,24 @@
+@import "./base.css";
+
+.layout-center-box {
+  width: 70%;
+  margin: 0 auto;
+}
+
+.text-overflow {
+  width: 100%; /* 设置容器宽度 */
+  white-space: nowrap; /* 强制不换行 */
+  overflow: hidden; /* 超出部分隐藏 */
+  text-overflow: ellipsis; /* 添加省略号 */
+}
+
+.left-line-title-tag {
+  display: inline-block;
+  width: 3px;
+  height: 20px;
+  color: #2e82ff;
+  background-color: #2e82ff;
+  position: absolute;
+  left: 0;
+  top: 25%;
+}
