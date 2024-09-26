@@ -89,7 +89,7 @@
 
       <el-table-column label="对接文档">
         <template #default="scope">
-         <span style="color: red;cursor: pointer;" @click="downUrl(scope.row.serviceDocUrl)">下载</span>
+         <span  style="cursor: pointer;" :style="{ color: scope.row.approvalFlag == '1' ? 'red' : '#AAAAAA' }"    @click="downUrl(scope.row)">下载</span>
         </template>
       </el-table-column>
 
@@ -193,8 +193,11 @@ const setData = function (value) {
 };
 
 
-const downUrl = function(url){
-  window.open(url, '_blank');
+const downUrl = function(item){
+  console.log(item)
+  if(!item.serviceDocUrl)return
+
+  window.open(item.url, '_blank');
 }
 
 const getCodeName = function (codeId) {
