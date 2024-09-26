@@ -28,26 +28,26 @@
 
           <div style="width: 350px; margin-top: 20px" class="code-box">
             <el-input
-             v-model="formData.codeValue"
+              v-model="formData.codeValue"
               size="large"
               auto-complete="off"
               placeholder="验证码"
-              style="width: 220px;"
-            
+              style="width: 220px"
             >
               <template #prefix>
                 <el-icon><Tickets /></el-icon>
               </template>
             </el-input>
             <div class="login-code">
-              <el-button style="width: 120px;" :disabled="timeData > 0" @click="getCodeValue">
+              <el-button
+                style="width: 120px"
+                :disabled="timeData > 0"
+                @click="getCodeValue"
+              >
                 {{ timeData > 0 ? timeData + "秒" : "发送验证码" }}
               </el-button>
             </div>
           </div>
-
-
-
 
           <el-input
             v-if="data.type == 'loginUser'"
@@ -63,6 +63,7 @@
             v-model="formData.password"
             style="width: 350px; margin-top: 20px"
             v-if="data.type == 'loginUser'"
+            type="password"
             placeholder="请输入密码"
           >
             <template #prefix>
@@ -73,13 +74,13 @@
             v-model="formData.confirmPassword"
             style="width: 350px; margin-top: 20px"
             v-if="data.type == 'loginUser'"
+            type="password"
             placeholder="确认密码"
           >
             <template #prefix>
               <el-icon><Unlock /></el-icon>
             </template>
           </el-input>
-
 
           <el-form-item style="width: 350px; margin-top: 40px">
             <el-button
@@ -106,8 +107,8 @@
 
 <script setup>
 import { onMounted, ref, reactive } from "vue";
-import { register ,getCodeValueData} from '@/api/login'
-import { ElMessage } from 'element-plus'
+import { register, getCodeValueData } from "@/api/login";
+import { ElMessage } from "element-plus";
 
 const props = defineProps({
   dialogVisible: {
@@ -117,14 +118,14 @@ const props = defineProps({
 });
 
 const dialog = ref(props.dialogVisible);
-const emits = defineEmits(["setData","handLogin"]);
-const timeData = ref(0)
-const loading = ref(false)
+const emits = defineEmits(["setData", "handLogin"]);
+const timeData = ref(0);
+const loading = ref(false);
 
 import { useRouter } from "vue-router";
 
 const router = useRouter();
-let timeout = null
+let timeout = null;
 
 const data = reactive({
   title: "手机号注册",
@@ -132,19 +133,13 @@ const data = reactive({
   type: "loginUser",
 });
 
-
 const formData = reactive({
-  phoneNumber:'',
-  codeValue:"",
-  confirmPassword:'',
-  password:'',
-  username:'',
-
-
-
-
-
-})
+  phoneNumber: "",
+  codeValue: "",
+  confirmPassword: "",
+  password: "",
+  username: "",
+});
 
 //验证码图形生成
 var show_num = [];
@@ -159,28 +154,22 @@ function login() {
 const handleRegister = async function () {
   console.log("注册");
 
-
-
   if (!formData.phoneNumber) {
     ElMessage({
       message: "请先输入用户手机号",
       type: "warning",
     });
     return;
-  }else{
-
+  } else {
     const pattern = /^1[3-9]\d{9}$/;
 
-    if(!pattern.test(formData.phoneNumber)){
+    if (!pattern.test(formData.phoneNumber)) {
       ElMessage({
-      message: "请输入正确的手机号",
-      type: "warning",
-    });
-    return;
+        message: "请输入正确的手机号",
+        type: "warning",
+      });
+      return;
     }
-
-
-
   }
 
   if (!formData.codeValue) {
@@ -199,7 +188,6 @@ const handleRegister = async function () {
     return;
   }
 
-
   if (!formData.password) {
     ElMessage({
       message: "请先输入密码",
@@ -208,38 +196,23 @@ const handleRegister = async function () {
     return;
   }
 
-
   if (!formData.confirmPassword) {
     ElMessage({
       message: "请先输入重复密码",
       type: "warning",
     });
     return;
-  }else{
-
-    if(formData.confirmPassword !== formData.password){
+  } else {
+    if (formData.confirmPassword !== formData.password) {
       ElMessage({
-      message: "密码必须和重复密码一致",
-      type: "warning",
-    });
-    return;
+        message: "密码必须和重复密码一致",
+        type: "warning",
+      });
+      return;
     }
-
-
-
   }
 
-
-
-
-
-
-
-
-
-
-
-  let resData = await register(formData)
+  let resData = await register(formData);
 
   emits("setData", {
     key: "registerDialogVisible",
@@ -252,53 +225,41 @@ const handleRegister = async function () {
   });
 
   ElMessage({
-    type: 'success',
-      message: '注册成功',
-    })
+    type: "success",
+    message: "注册成功",
+  });
 
-  console.log(formData,'11111111')
+  console.log(formData, "11111111");
 };
 
-
-const  getCodeValue = async function (){
-
-  if(formData.phoneNumber){
-
-    if(timeData.value !== 0){
-      return
+const getCodeValue = async function () {
+  if (formData.phoneNumber) {
+    if (timeData.value !== 0) {
+      return;
     }
 
-    timeData.value = 60
+    timeData.value = 60;
 
     timeout = setInterval(() => {
-
-      if(timeData.value == 1 || timeData.value < 1){
-        clearInterval(timeout)
+      if (timeData.value == 1 || timeData.value < 1) {
+        clearInterval(timeout);
       }
-      timeData.value = timeData.value -1
-      
+      timeData.value = timeData.value - 1;
     }, 1000);
 
-
     let resData = await getCodeValueData({
-    phoneNumber:formData.phoneNumber
-  })
-
-  console.log(resData,'验证码信息')
-  }else{
-
-    ElMessage({
-      message: '请先输入手机号',
-      type: 'warning'
+      phoneNumber: formData.phoneNumber,
     });
-    return
 
+    console.log(resData, "验证码信息");
+  } else {
+    ElMessage({
+      message: "请先输入手机号",
+      type: "warning",
+    });
+    return;
   }
-
-
-
-
-}
+};
 
 //关闭弹框
 const dialogClose = function () {
@@ -317,10 +278,6 @@ const handLogin = function () {
   });
 
   emits("handLogin");
-
-
-
-
 };
 </script>
 
