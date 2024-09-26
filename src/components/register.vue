@@ -19,6 +19,7 @@
             v-if="data.type == 'loginUser'"
             v-model="formData.phoneNumber"
             style="width: 350px; margin-top: 20px"
+            maxlength="11"
             placeholder="11位手机号"
           >
             <template #prefix>
@@ -220,7 +221,7 @@ const handleRegister = async function () {
   });
 
   emits("setData", {
-    key: "enterpriseAuthDialogVisible",
+    key: "dialogVisible",
     value: true,
   });
 
