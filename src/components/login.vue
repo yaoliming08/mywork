@@ -32,13 +32,13 @@
               </template>
             </el-input>
 
-            <div class="code-box" v-if="data.authType == 'sms'">
+            <div class="code-box" v-if="data.authType == 'sms'" style="display: flex;justify-content: space-between;width: 100%;">
               <el-input
                 v-model="formData.codeValue"
                 size="large"
                 auto-complete="off"
                 placeholder="验证码"
-                style="width: 63%"
+               style="width: 60%"
               >
                 <template #prefix>
                   <el-icon><Tickets /></el-icon>
