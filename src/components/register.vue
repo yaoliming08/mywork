@@ -1,7 +1,6 @@
 <template>
   <el-dialog
     v-model="dialog"
-    width="800"
     :lock-scroll="false"
     draggable
     class="dialog-login-box"
@@ -18,7 +17,7 @@
           <el-input
             v-if="data.type == 'loginUser'"
             v-model="formData.phoneNumber"
-            style="width: 350px; margin-top: 20px"
+            style="width: 350px; margin-top: 10px"
             maxlength="11"
             placeholder="11位手机号"
           >
@@ -27,7 +26,7 @@
             </template>
           </el-input>
 
-          <div style="width: 350px; margin-top: 20px" class="code-box">
+          <div style="width: 350px; margin-top: 15px" class="code-box">
             <el-input
               v-model="formData.codeValue"
               size="large"
@@ -53,7 +52,7 @@
           <el-input
             v-if="data.type == 'loginUser'"
             v-model="formData.username"
-            style="width: 350px; margin-top: 20px"
+            style="width: 350px; margin-top: 15px"
             placeholder="请输入用户名"
           >
             <template #prefix>
@@ -62,7 +61,7 @@
           </el-input>
           <el-input
             v-model="formData.password"
-            style="width: 350px; margin-top: 20px"
+            style="width: 350px; margin-top: 15px"
             v-if="data.type == 'loginUser'"
             type="password"
             placeholder="请输入密码"
@@ -73,7 +72,7 @@
           </el-input>
           <el-input
             v-model="formData.confirmPassword"
-            style="width: 350px; margin-top: 20px"
+            style="width: 350px; margin-top: 15px"
             v-if="data.type == 'loginUser'"
             type="password"
             placeholder="确认密码"
@@ -83,7 +82,7 @@
             </template>
           </el-input>
 
-          <el-form-item style="width: 350px; margin-top: 40px">
+          <el-form-item style="width: 350px; margin-top: 20px">
             <el-button
               :loading="loading"
               size="large"
@@ -299,7 +298,8 @@ const handLogin = function () {
   margin-top: -30px;
 
   .login-img {
-    width: 400px;
+    // height: 300px;
+    width: 350px;
     img {
       width: 100%;
       height: 100%;
@@ -307,7 +307,7 @@ const handLogin = function () {
   }
 
   .container {
-    width: 100%;
+    width: 700px !important;
 
     .login-title {
       text-align: center;
@@ -330,13 +330,15 @@ const handLogin = function () {
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding-top: 20px;
+
     }
 
     .code-box {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      width: 350px;
+      margin-top: 10px;
     }
 
     .bottom-btn {

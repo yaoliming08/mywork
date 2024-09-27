@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     v-model="dialog"
-    style="width: 800px"
+    
     :lock-scroll="false"
     draggable
     class="dialog-login-box"
@@ -102,7 +102,7 @@
               <el-button
                 :loading="loading"
                 size="large"
-                type="primary"
+                type="danger"
                 style="width: 350px"
                 @click.prevent="handleLogin"
               >
@@ -361,9 +361,10 @@ initGetCodeImg();
 .login-box {
   display: flex;
   margin-top: -30px;
+  height: 450px;
 
   .login-img {
-    width: 400px;
+    height: 100%;
     img {
       width: 100%;
       height: 100%;
@@ -371,12 +372,12 @@ initGetCodeImg();
   }
 
   .container {
-    width: 100%;
+    width: 700px;
 
     .login-title {
       text-align: center;
       font-size: 28px;
-      color: #2477ef;
+      color: #000000;
       padding-top: 10px;
       font-weight: 600;
     }
@@ -384,7 +385,7 @@ initGetCodeImg();
     .check-tab {
       display: flex;
       justify-content: flex-end;
-      color: #e28908;
+      color: #609FF4;
       margin-right: 12%;
       margin-top: 5px;
       cursor: pointer;
@@ -412,5 +413,11 @@ initGetCodeImg();
       margin-top: 10px;
     }
   }
+
+
 }
+
+
+
+
 </style>

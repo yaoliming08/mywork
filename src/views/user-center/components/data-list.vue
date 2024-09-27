@@ -175,7 +175,7 @@ const data = reactive({
 
     {
       label: "联系人",
-      id: "requireCode",
+      id: "contactName",
     },
     {
       label: "联系电话",
@@ -197,7 +197,7 @@ const downUrl = function(item){
   console.log(item)
   if(!item.serviceDocUrl)return
 
-  window.open(item.url, '_blank');
+  window.open(item.serviceDocUrl, '_blank');
 }
 
 const getCodeName = function (codeId) {
