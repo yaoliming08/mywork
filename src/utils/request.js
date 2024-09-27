@@ -9,7 +9,7 @@ import {
 } from "element-plus";
  
 const http = axios.create({
-  baseURL: '/prod-api',
+  baseURL: '/dtshare/prod-api',
   timeout: 1000,
   // 可以添加更多配置...
 });

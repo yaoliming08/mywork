@@ -42,7 +42,7 @@ export default defineConfig({
         host: true,
         open: true,
         proxy: {
-          "/prod-api": {
+          "/dtshare/prod-api": {
             target: "http://110.42.239.134:17600/" ,
             changeOrigin: true,
             // rewrite: (p) => p.replace(/^\/dev-api/, '')
