@@ -284,7 +284,7 @@ const viewDetail = function (item) {
 
 const exChange = function(){
 
-  ElMessageBox.prompt('请输入你的密钥', '', {
+  ElMessageBox.prompt('请输入你的密钥(‌‌基于国密SM2算法公钥，详情参考资源接口文档)', '', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
   })
