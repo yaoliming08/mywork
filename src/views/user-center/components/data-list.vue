@@ -2,22 +2,21 @@
   <div class="data-list" v-if="!data.isDetail">
     <div class="hed-search">
       <div style="display: flex">
-        <el-form-item label="需求名称">
-          <el-input v-model="formData.requireName" />
-        </el-form-item>
+        <el-input v-model="formData.requireName" placeholder="请输入需求名称"/>
         <el-button style="margin-left: 20px" type="primary" @click="getDataList"
           >查询</el-button
         >
       </div>
 
       <el-button style="margin-left: 20px" type="primary" @click="createNeed"
-        >创建新需求</el-button
+        >+创建新需求</el-button
       >
     </div>
     <el-table
       :data="tableData"
       border
       style="width: 100%"
+      :header-cell-style="rowClass" 
       empty-text="暂无数据"
     >
       <el-table-column label="需求名称" prop="requireName" />
@@ -210,6 +209,11 @@ const getStateName = function(state){
 
 }
 
+
+const rowClass = function({ row, column, rowIndex, columnIndex }){
+  return {background: '#F0F7FE'};
+}
+
 const createNeed =  async function () {
 
 
@@ -320,6 +324,8 @@ getDataList();
   .hed-search {
     display: flex;
     justify-content: space-between;
+
+    padding-bottom: 20px;
   }
 }
 
@@ -344,5 +350,9 @@ getDataList();
 
     }
   }
+}
+
+.el-table thead th {
+  background-color: #f2f2f2; /* 设置表头背景色 */
 }
 </style>
