@@ -186,6 +186,7 @@ const SubmitEvent = async function () {
 
 
   formData.demandUrl = fileList.value.map(item => item.raw.uploadUlr).join(',');
+  formData.demandName  = fileList.value.map(item => item.name).join(',');
   if (
     !formData.requireName ||
     !formData.enterpriseName ||
