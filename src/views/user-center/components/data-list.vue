@@ -106,10 +106,10 @@
       </el-table-column>
     </el-table>
     <div class="img-box" v-if="data.currentDetail.demandUrlList?.length">
-      <div class="img-line-box" v-for="(img,index) in data.currentDetail.demandUrlList" :key="img">
-        <img :src="`src/assets/img/file/${getImgUrl(img)}.png`" alt="" />
-        <span>附件{{index  }}</span>
-        <span style="color: red;" @click="downWord(img)">下载</span>
+      <div class="img-line-box" v-for="img in data.currentDetail.demandUrlList" :key="img.fileUrl">
+        <img :src="`src/assets/img/file/${getImgUrl(img.fileUrl)}.png`" alt="" />
+        <span>{{img.fileName  }}</span>
+        <span style="color: red;" @click="downWord(img.fileUrl)">下载</span>
       </div>
     </div>
 
