@@ -25,9 +25,7 @@
             <el-input v-model="formData.contactPhone" />
           </el-form-item>
 
-          <el-form-item label="数据要素" >
-
-
+          <el-form-item label="数据要素">
             <el-select
               v-model="formData.resGroup"
               multiple
@@ -52,6 +50,56 @@
             />
           </el-form-item>
 
+          <el-form-item label="文件资料">
+            <el-upload
+              list-type="picture-card"
+              v-model:file-list="fileList"
+              :http-request="(e) => uploadRequest(e, item)"
+            >
+              <el-icon><Plus /></el-icon>
+
+              <template #file="{ file }">
+                <div>
+                  <img
+                    v-if="file.raw.name.includes('jpeg')  || file.raw.name.includes('png')"
+                    class="el-upload-list__item-thumbnail"
+                    :src="file.url"
+                    alt=""
+                  />
+                  <img
+                   v-else
+                    class="el-upload-list__item-thumbnail"
+                    :src="`src/assets/img/file/${getImgUrl(file)}.png`"
+                    alt=""
+                  />
+   
+                  <span class="el-upload-list__item-actions">
+                    <!-- <span
+                      class="el-upload-list__item-preview"
+                      @click="handlePictureCardPreview(file)"
+                    >
+                      <el-icon><zoom-in /></el-icon>
+                    </span>
+                    <span
+                      v-if="!disabled"
+                      class="el-upload-list__item-delete"
+                      @click="handleDownload(file)"
+                    >
+                      <el-icon><Download /></el-icon>
+                    </span> -->
+                    <span
+                      v-if="!disabled"
+                      class="el-upload-list__item-delete"
+                      @click="handleRemove(file)"
+                    >
+                      <el-icon><Delete /></el-icon>
+                    </span>
+                  </span>
+                </div>
+              </template>
+            </el-upload>
+          </el-form-item>
+
           <div class="bottom-btn">
             <el-button
               :loading="loading"
@@ -62,7 +110,9 @@
               提交
             </el-button>
 
-            <el-button @click.prevent="dialogClose" size="large"> 返回 </el-button>
+            <el-button @click.prevent="dialogClose" size="large">
+              返回
+            </el-button>
           </div>
         </div>
       </div>
@@ -72,7 +122,7 @@
 
 <script setup>
 import { onMounted, ref, reactive } from "vue";
-import { AuthAdd } from "@/api/login";
+import { AuthAdd, uploadFileApi } from "@/api/login";
 import { ElMessage } from "element-plus";
 
 const props = defineProps({
@@ -85,11 +135,9 @@ const props = defineProps({
   },
 });
 
+const fileList = ref([])
+
 const dialog = ref(props.dialogVisible);
-
-
-
-
 
 const emits = defineEmits(["setData", "searchData"]);
 const loading = ref(false);
@@ -116,6 +164,7 @@ const formData = reactive({
   contactPhone: "", //联系人电话
   requireDesc: "", //需求描述
   socialCode: "",
+  demandUrl: "",
 });
 
 formData.enterpriseName = userInfo.enterpriseName;
@@ -133,24 +182,26 @@ if (props.formData) {
 
 const SubmitEvent = async function () {
 
+  console.log(fileList.value,3333333333)
 
-  if(!formData.requireName || !formData.enterpriseName || !formData.contactName || !formData.contactPhone ){
+
+  formData.demandUrl = fileList.value.map(item => item.raw.uploadUlr).join(',');
+  if (
+    !formData.requireName ||
+    !formData.enterpriseName ||
+    !formData.contactName ||
+    !formData.contactPhone
+  ) {
     ElMessage({
-      type: 'error',
-      message: '请先填写完成申请信息',
-    })
-    return
+      type: "error",
+      message: "请先填写完成申请信息",
+    });
+    return;
   }
-
-
-
-
 
   let resData = await AuthAdd(formData);
 
   emits("searchData");
-
-  
 
   emits("setData", {
     key: "enterpriseAuthDialogVisible",
@@ -163,7 +214,83 @@ const SubmitEvent = async function () {
     type: "success",
     message: "提交成功，请等待审核",
   });
-  dialogClose()
+  dialogClose();
+};
+
+
+const getImgUrl = function(file){
+  console.log(3333333,file)
+
+  const whiteList = [
+    "txt",
+    "docx",
+    "doc",
+    "xls",
+    "xlsx",
+    "pdf",
+    "jpg",
+    "jpeg",
+    "png",
+    "html",
+    "zip",
+    "rar",
+  ];
+  const fileSuffix = file.name.substring(file.name.lastIndexOf(".") + 1);
+
+  return fileSuffix
+
+}
+
+const onUpload = function (file) {
+  console.log("sdfsd1111112", file);
+  const whiteList = [
+    "txt",
+    "docx",
+    "doc",
+    "xls",
+    "xlsx",
+    "pdf",
+    "jpg",
+    "jpeg",
+    "png",
+    "html",
+    "zip",
+    "rar",
+  ];
+  const fileSuffix = file.name.substring(file.name.lastIndexOf(".") + 1);
+  if (whiteList.indexOf(fileSuffix) === -1) {
+    ElMessage({
+      type: "error",
+      message:
+        "上传文件只能是txt,docx,doc,xls,xlsx,pdf,jpg,jpeg,png,html,zip,rar格式",
+    });
+
+    return false;
+  } else {
+    if (fileSuffix === "png" || fileSuffix === "jpg" || fileSuffix === "jpeg") {
+      file.showUrl = file.url;
+    } else {
+      // let urlStr = `/assets/img/file/${fileSuffix}.png`
+      // let urlStr = '@/assets/img/flow/flow4.png'
+
+      // file.showUrl =  new URL(urlStr, import.meta.url).href
+
+      file.showUrl = new URL(
+        "@/assets/img/flow/flow4.png",
+        import.meta.url
+      ).href;
+      console.log(urlStr, 766);
+    }
+  }
+  console.log(
+    fileSuffix,
+    `@/assets/file/${fileSuffix}.png`,
+    222222222,
+    file.showUrl
+  );
+  file.fileType = fileSuffix;
+
+  console.log(file, 3333333333);
 };
 
 //关闭弹框
@@ -182,9 +309,59 @@ const getDtresAndQuotaList = async function () {
 
 getDtresAndQuotaList();
 
+const dialogImageUrl = ref("");
+const dialogVisible = ref(false);
+const disabled = ref(false);
+
+const handleRemove = (file) => {
+  console.log(file,fileList.value,223333333333);
+
+
+   fileList.value = fileList.value.filter((item)=>{ item.name !== file.name})
+
+
+
+      // this.successData.splice(idx, 1)
+
+
+
+};
+
+const handlePictureCardPreview = (file) => {
+  dialogImageUrl.value = false;
+  dialogVisible.value = true;
+};
+
+const handleDownload = (file) => {
+  console.log(file, "上传得文件");
+};
+
+const uploadRequest = (fileObj) => {
+  console.log(fileObj, "上传");
+
+  let file = fileObj.file;
+  const isLt5M = file.size / 1024 / 1024 < 5;
+  if (!isLt5M) {
+    ElMessage({
+      type: "error",
+      message: "上传文件大小不能超过 50MB!",
+    });
+    // fileList.splice(-1,1) //移除当前超出大小的文件
+    return false;
+  }
+  uploadFileApi({
+    file,
+  }).then((res) => {
+
+
+    file.uploadUlr = res.uploadUrl
+
+
+    console.log(res, "11111111");
+  });
+};
+
 onMounted(() => {});
-
-
 </script>
 
 <style lang="scss">
@@ -199,6 +376,7 @@ onMounted(() => {});
 .login-box {
   display: flex;
   margin-top: -30px;
+  padding-left: 20px;
 
   .login-img {
     width: 400px;
@@ -256,6 +434,11 @@ onMounted(() => {});
         }
       }
     }
+  }
+  :deep(.el-form-item__label) {
+    width: 100px !important;
+    justify-content: flex-end;
+    color: #999999;
   }
 }
 </style>

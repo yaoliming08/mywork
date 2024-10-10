@@ -18,17 +18,13 @@
 
 
 
-  <applyBox
-      v-if="data.dialogVisible"
-      :dialogVisible="data.dialogVisible"
-      @setData="setData"
-    />
+
 </template>
 
 <script setup>
 import centerTable from "@/components/center-table.vue";
 import solveModule from "./components/solve-module.vue";
-import applyBox from "./components/apply.vue";
+
 import bottom from '@/components/bottom.vue'
 
 
