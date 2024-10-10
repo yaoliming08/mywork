@@ -2,7 +2,7 @@
   <div class="data-list" v-if="!data.isDetail">
     <div class="hed-search">
       <div style="display: flex">
-        <el-input v-model="formData.requireName" placeholder="请输入需求名称"/>
+        <el-input v-model="formData.requireName" placeholder="请输入需求名称" />
         <el-button style="margin-left: 20px" type="primary" @click="getDataList"
           >查询</el-button
         >
@@ -16,7 +16,7 @@
       :data="tableData"
       border
       style="width: 100%"
-      :header-cell-style="rowClass" 
+      :header-cell-style="rowClass"
       empty-text="暂无数据"
     >
       <el-table-column label="需求名称" prop="requireName" />
@@ -25,19 +25,25 @@
 
       <el-table-column label="状态">
         <template #default="scope">
-      {{ getStateName(scope.row.approvalFlag) }}
+          {{ getStateName(scope.row.approvalFlag) }}
         </template>
       </el-table-column>
       <el-table-column label="操作">
         <template #default="scope">
-          <div @click="viewDetail(scope.row)" style="color: #409DFF;cursor: pointer;">查看详情</div>
+          <div
+            @click="viewDetail(scope.row)"
+            style="color: #409dff; cursor: pointer"
+          >
+            查看详情
+          </div>
         </template>
       </el-table-column>
     </el-table>
   </div>
   <div v-else class="detail-box">
-    <el-button class="back-btn" style=""  type="primary" @click="goBack" 
-    >返回</el-button>
+    <el-button class="back-btn" style="" type="primary" @click="goBack"
+      >返回</el-button
+    >
 
     <el-descriptions :column="2" border>
       <el-descriptions-item
@@ -51,7 +57,7 @@
           </div>
         </template>
         <div v-if="item.codeList">
-          {{ item.codeList[ data.currentDetail[item.id]] }}
+          {{ item.codeList[data.currentDetail[item.id]] }}
         </div>
         <div v-else>
           {{ data.currentDetail[item.id] }}
@@ -72,7 +78,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="API key" prop="svrAppkey"  width="200px"/>
+      <el-table-column label="API key" prop="svrAppkey" width="200px" />
 
       <el-table-column label="授权时间">
         <template #default="scope">
@@ -88,14 +94,32 @@
 
       <el-table-column label="对接文档">
         <template #default="scope">
-         <span  style="cursor: pointer;" :style="{ color: scope.row.approvalFlag == '1' ? 'red' : '#AAAAAA' }"    @click="downUrl(scope.row)">下载</span>
+          <span
+            style="cursor: pointer"
+            :style="{
+              color: scope.row.approvalFlag == '1' ? 'red' : '#AAAAAA',
+            }"
+            @click="downUrl(scope.row)"
+            >下载</span
+          >
         </template>
       </el-table-column>
-
-
     </el-table>
+    <div class="img-box" v-if="data.currentDetail.demandUrlList?.length">
+      <div class="img-line-box" v-for="(img,index) in data.currentDetail.demandUrlList" :key="img">
+        <img :src="`src/assets/img/file/${getImgUrl(img)}.png`" alt="" />
+        <span>附件{{index  }}</span>
+        <span style="color: red;" @click="downWord(img)">下载</span>
+      </div>
+    </div>
 
-    <div class="bottom-box" v-if="data.currentDetail.approvalFlag == 1 || data.currentDetail.approvalFlag == 3">
+    <div
+      class="bottom-box"
+      v-if="
+        data.currentDetail.approvalFlag == 1 ||
+        data.currentDetail.approvalFlag == 3
+      "
+    >
       <div class="bottom-line">
         <text class="label-text">数据提供方公钥：</text>
         <text style="overflow-wrap: break-word; width: 550px">
@@ -104,21 +128,30 @@
       </div>
       <div class="bottom-line">
         <text class="label-text">需求公钥：</text>
-        <el-button style="margin-left: 20px" type="primary" @click="exChange" v-if="!data.currentDetail.usegeSecretPubkey"
-        >点击交换密钥</el-button>
-        <text v-else> {{  data.currentDetail.usegeSecretPubkey}}</text>
+        <el-button
+          style="margin-left: 20px"
+          type="primary"
+          @click="exChange"
+          v-if="!data.currentDetail.usegeSecretPubkey"
+          >点击交换密钥</el-button
+        >
+        <text v-else> {{ data.currentDetail.usegeSecretPubkey }}</text>
       </div>
-      <div  class="bottom-line">
+      <div class="bottom-line">
         <text class="label-text">对接人信息：</text>
-        <text class="value-text"> {{ data.currentDetail.joinName  || '--'}}</text>
+        <text class="value-text">
+          {{ data.currentDetail.joinName || "--" }}</text
+        >
       </div>
-      <div  class="bottom-line">
+      <div class="bottom-line">
         <text class="label-text">对接人电话：</text>
-        <text class="value-text"> {{ data.currentDetail.joinPhone || '--'}}</text>
+        <text class="value-text">
+          {{ data.currentDetail.joinPhone || "--" }}</text
+        >
       </div>
-      <div  class="bottom-line">
+      <div class="bottom-line">
         <text class="label-text">审批说明：</text>
-        <text class="value-text"> {{ data.currentDetail.remark || '--'}}</text>
+        <text class="value-text"> {{ data.currentDetail.remark || "--" }}</text>
       </div>
     </div>
   </div>
@@ -134,13 +167,16 @@
 
 <script setup>
 import { ref, reactive } from "vue";
-import { getAuthList, gerCodeList, getDtresAndQuota  ,authSubmit ,authCheck} from "@/api/login";
-import { ElMessage, ElMessageBox } from 'element-plus'
-
-
+import {
+  getAuthList,
+  gerCodeList,
+  getDtresAndQuota,
+  authSubmit,
+  authCheck,
+} from "@/api/login";
+import { ElMessage, ElMessageBox } from "element-plus";
 
 import applyBox from "@/components/home/apply.vue";
-
 
 const tableData = ref([]);
 const formData = reactive({
@@ -157,11 +193,11 @@ const data = reactive({
       label: "审批状态",
       id: "approvalFlag",
       codeList: {
-          0: "拒绝",
-          1: "通过",
-          2: "审批中",
-          3: "部分通过",
-        },
+        0: "拒绝",
+        1: "通过",
+        2: "审批中",
+        3: "部分通过",
+      },
     },
     {
       label: "需求名称",
@@ -191,79 +227,89 @@ const setData = function (value) {
   data[value.key] = value.value;
 };
 
+const downUrl = function (item) {
+  console.log(item);
+  if (!item.serviceDocUrl) return;
 
-const downUrl = function(item){
-  console.log(item)
-  if(!item.serviceDocUrl)return
+  window.open(item.serviceDocUrl, "_blank");
+};
 
-  window.open(item.serviceDocUrl, '_blank');
+const downWord = function (url){
+  window.open(url, "_blank");
 }
 
 const getCodeName = function (codeId) {
   return data.resGroupList.filter((item) => item.resGroup == codeId)[0].resName;
 };
 
-const getStateName = function(state){
- return [{name:'拒绝',id:'0'},{name:'通过',id:'1'},{name:'审批中',id:'2'},{name:'部分通过',id:'3'}].filter(item => item.id == state)[0]?.name
+const getStateName = function (state) {
+  return [
+    { name: "拒绝", id: "0" },
+    { name: "通过", id: "1" },
+    { name: "审批中", id: "2" },
+    { name: "部分通过", id: "3" },
+  ].filter((item) => item.id == state)[0]?.name;
+};
 
+const getImgUrl = function (name) {
+  const whiteList = [
+    "txt",
+    "docx",
+    "doc",
+    "xls",
+    "xlsx",
+    "pdf",
+    "jpg",
+    "jpeg",
+    "png",
+    "html",
+    "zip",
+    "rar",
+  ];
+  const fileSuffix = name.substring(name.lastIndexOf(".") + 1);
 
-}
+  return fileSuffix;
+};
 
+const rowClass = function ({ row, column, rowIndex, columnIndex }) {
+  return { background: "#F0F7FE" };
+};
 
-const rowClass = function({ row, column, rowIndex, columnIndex }){
-  return {background: '#F0F7FE'};
-}
-
-const createNeed =  async function () {
-
-
+const createNeed = async function () {
   let isOk = await authCheck();
 
+  if (isOk == 1) {
+    data.dialogVisible = true;
+  }
 
-if(isOk == 1){
-  data.dialogVisible = true;
-}
-
-
-if(isOk == 3){
-  ElMessage({
+  if (isOk == 3) {
+    ElMessage({
       message: "请先进行企业认证",
       type: "warning",
     });
     return;
-}
+  }
 
-if(isOk == 4){
-  ElMessage({
+  if (isOk == 4) {
+    ElMessage({
       message: "企业未通过审核,请通过审核后提交",
       type: "warning",
     });
     return;
-}
+  }
 
-
-if(isOk == 2){
-  ElMessageBox.confirm(
-    "当前用户已经有正在审核中的需求，是否继续创建新需求？",
-    { confirmButtonText: "确定", cancelButtonText: "取消" }
-  )
-    .then(() => {
-      data.dialogVisible = true;
-    })
-    .catch(() => {
-      // catch error
-    });
-}
-
-
-
-
-
-
-
-
-
-
+  if (isOk == 2) {
+    ElMessageBox.confirm(
+      "当前用户已经有正在审核中的需求，是否继续创建新需求？",
+      { confirmButtonText: "确定", cancelButtonText: "取消" }
+    )
+      .then(() => {
+        data.dialogVisible = true;
+      })
+      .catch(() => {
+        // catch error
+      });
+  }
 };
 
 const getDataList = async function (params) {
@@ -285,35 +331,33 @@ const viewDetail = function (item) {
   data.isDetail = true;
 };
 
-
-const exChange = function(){
-
-  ElMessageBox.prompt('请输入你的密钥(‌‌基于国密SM2算法公钥，详情参考资源接口文档)', '', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-  })
+const exChange = function () {
+  ElMessageBox.prompt(
+    "请输入你的密钥(‌‌基于国密SM2算法公钥，详情参考资源接口文档)",
+    "",
+    {
+      confirmButtonText: "确定",
+      cancelButtonText: "取消",
+    }
+  )
     .then(({ value }) => {
       authSubmit({
-        id:data.currentDetail.id,
-        usegeSecretPubkey:value
-      })
+        id: data.currentDetail.id,
+        usegeSecretPubkey: value,
+      });
 
-      data.currentDetail.usegeSecretPubkey = value
+      data.currentDetail.usegeSecretPubkey = value;
       ElMessage({
-        type: 'success',
+        type: "success",
         message: `提交成功`,
-      })
+      });
     })
-    .catch(() => {
+    .catch(() => {});
+};
 
-    })
-
-}
-
-const goBack = function (){
-  data.isDetail = false
-
-}
+const goBack = function () {
+  data.isDetail = false;
+};
 
 getDataList();
 </script>
@@ -329,12 +373,27 @@ getDataList();
   }
 }
 
-.detail-box{
+.img-box {
+  padding: 30px 0 20px 40px;
+  display: flex;
+  .img-line-box{
+    width: 300px;
+    word-wrap: break-word;
+    // display: flex;
+    // flex-direction: column;
+  }
+  img {
+    margin-right: 20px;
+    width: 120px;
+    height: 120px;
+  }
+}
+
+.detail-box {
   position: relative;
-  .back-btn{
+  .back-btn {
     position: absolute;
     right: -100px;
-
   }
 }
 
@@ -345,9 +404,8 @@ getDataList();
   .bottom-line {
     display: flex;
     margin-bottom: 5px;
-    .label-text{
+    .label-text {
       width: 150px;
-
     }
   }
 }
