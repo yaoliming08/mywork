@@ -72,6 +72,19 @@ const oneRoute = [
     component: () => import('@/views/financial-supermarket/financial-supermarket.vue')
   },
   {
+    name: "dataScenario",
+    path:'/data-scenario',
+    component: () => import('@/views/data-scenario/data-scenario.vue')
+  },
+
+  {
+    name: "dataOutcome",
+    path:'/data-outcome',
+    component: () => import('@/views/data-outcome/data-outcome.vue')
+  },
+
+  
+  {
     name: "characteristicFinance",
     path:'/characteristic-finance',
     component: () => import('@/views/characteristic-finance/characteristic-finance.vue')

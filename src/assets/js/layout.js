@@ -11,8 +11,18 @@ const tabList = [
     path:'/data-element',
   },
   {
-    name: "联系我们",
+    name: "数据场景",
     id: 3,
+    path:'/data-scenario',
+  },
+  {
+    name: "数据成果",
+    id: 4,
+    path:'/data-outcome',
+  },
+  {
+    name: "联系我们",
+    id: 5,
     path:'/about-us',
   }, 
   // {
