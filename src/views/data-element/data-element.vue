@@ -34,6 +34,7 @@
 
     <div class="bottom-img-box">
       <div class="center-title">个人风险评估模型</div>
+      <div class="center-title-msg">主要用于识别个人信用风险，通过多维度的特征和行为分析，助力银行在借贷场景多方位判断个人借贷还款能力，在客户资产管理场景评估客户信用风险等</div>
       <img class="bottom-img" src="@/assets/data/dataBG5.png" alt="" />
     </div>
     <Bottom />
@@ -169,10 +170,20 @@ getDtresAndQuotaList();
       left: 0;
       right: 0;
       top: 15px;
+    
+    }
+
+    .center-title-msg{
+      position: absolute;
+      text-align: center;
+      left: 0;
+      right: 0;
+      top: 85px;
     }
     .bottom-img {
       width: 100%;
-      height: 660px;
+      height: 680px;
+      padding-top: 20px;
     }
   }
 }

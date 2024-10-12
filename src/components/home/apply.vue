@@ -61,18 +61,22 @@
               <template #file="{ file }">
                 <div>
                   <img
-                    v-if="file.raw.name.includes('jpeg')  || file.raw.name.includes('png')"
+                    v-if="
+                      file.raw.name.includes('jpeg') ||
+                      file.raw.name.includes('png') ||
+                      file.raw.name.includes('jpg')
+                    "
                     class="el-upload-list__item-thumbnail"
                     :src="file.url"
                     alt=""
                   />
                   <img
-                   v-else
+                    v-else
                     class="el-upload-list__item-thumbnail"
-                    :src="`src/assets/img/file/${getImgUrl(file)}.png`"
+                    :src="getImgUrl(file)"
                     alt=""
                   />
-   
+
                   <span class="el-upload-list__item-actions">
                     <!-- <span
                       class="el-upload-list__item-preview"
@@ -135,7 +139,7 @@ const props = defineProps({
   },
 });
 
-const fileList = ref([])
+const fileList = ref([]);
 
 const dialog = ref(props.dialogVisible);
 
@@ -181,12 +185,12 @@ if (props.formData) {
 }
 
 const SubmitEvent = async function () {
+  console.log(fileList.value, 3333333333);
 
-  console.log(fileList.value,3333333333)
-
-
-  formData.demandUrl = fileList.value.map(item => item.raw.uploadUlr).join(',');
-  formData.demandName  = fileList.value.map(item => item.name).join(',');
+  formData.demandUrl = fileList.value
+    .map((item) => item.raw.uploadUlr)
+    .join(",");
+  formData.demandName = fileList.value.map((item) => item.name).join(",");
   if (
     !formData.requireName ||
     !formData.enterpriseName ||
@@ -218,9 +222,8 @@ const SubmitEvent = async function () {
   dialogClose();
 };
 
-
-const getImgUrl = function(file){
-  console.log(3333333,file)
+const getImgUrl = function (file) {
+  console.log(3333333, file);
 
   const whiteList = [
     "txt",
@@ -238,9 +241,17 @@ const getImgUrl = function(file){
   ];
   const fileSuffix = file.name.substring(file.name.lastIndexOf(".") + 1);
 
-  return fileSuffix
+  // /assets/img/file/${getImgUrl(file)}.png`
 
-}
+  // let urlStr = new URL(`assets/img/file/${fileSuffix}.png`, import.meta.url)
+
+  let urlStr = new URL(`/src/assets/img/file/${fileSuffix}.png`, import.meta.url).href;
+  // let urlStr = new URL(`src/assets/img/file/docx.png`, import.meta.url).href;
+
+  console.log(urlStr,4444444444,`@/assets/img/file/${fileSuffix}.png`)
+
+  return urlStr;
+};
 
 const onUpload = function (file) {
   console.log("sdfsd1111112", file);
@@ -315,17 +326,13 @@ const dialogVisible = ref(false);
 const disabled = ref(false);
 
 const handleRemove = (file) => {
-  console.log(file,fileList.value,223333333333);
+  console.log(file, fileList.value, 223333333333);
 
+  fileList.value = fileList.value.filter((item) => {
+    item.name !== file.name;
+  });
 
-   fileList.value = fileList.value.filter((item)=>{ item.name !== file.name})
-
-
-
-      // this.successData.splice(idx, 1)
-
-
-
+  // this.successData.splice(idx, 1)
 };
 
 const handlePictureCardPreview = (file) => {
@@ -353,10 +360,7 @@ const uploadRequest = (fileObj) => {
   uploadFileApi({
     file,
   }).then((res) => {
-
-
-    file.uploadUlr = res.uploadUrl
-
+    file.uploadUlr = res.uploadUrl;
 
     console.log(res, "11111111");
   });
