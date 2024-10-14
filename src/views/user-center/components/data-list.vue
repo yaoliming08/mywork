@@ -106,10 +106,23 @@
       </el-table-column>
     </el-table>
     <div class="img-box" v-if="data.currentDetail.demandUrlList?.length">
-      <div class="img-line-box" v-for="img in data.currentDetail.demandUrlList" :key="img.fileUrl">
-        <img :src="`src/assets/img/file/${getImgUrl(img.fileUrl)}.png`" alt="" />
-        <span>{{img.fileName  }}</span>
-        <span style="color: red;" @click="downWord(img.fileUrl)">下载</span>
+      <div
+        class="img-line-box"
+        v-for="img in data.currentDetail.demandUrlList"
+        :key="img.fileUrl"
+      >
+        <img
+          v-if="
+            img.fileUrl.includes('jpeg') ||
+            img.fileUrl.includes('png') ||
+            img.fileUrl.includes('jpg')
+          "
+          :src="img.fileUrl"
+          alt=""
+        />
+        <img v-else :src="getImgUrl(img.fileUrl)" alt="" />
+        <span>{{ img.fileName }}</span>
+        <span style="color: red" @click="downWord(img.fileUrl)">下载</span>
       </div>
     </div>
 
@@ -234,9 +247,9 @@ const downUrl = function (item) {
   window.open(item.serviceDocUrl, "_blank");
 };
 
-const downWord = function (url){
+const downWord = function (url) {
   window.open(url, "_blank");
-}
+};
 
 const getCodeName = function (codeId) {
   return data.resGroupList.filter((item) => item.resGroup == codeId)[0].resName;
@@ -268,7 +281,12 @@ const getImgUrl = function (name) {
   ];
   const fileSuffix = name.substring(name.lastIndexOf(".") + 1);
 
-  return fileSuffix;
+  let urlStr = new URL(
+    `/src/assets/img/file/${fileSuffix}.png`,
+    import.meta.url
+  ).href;
+
+  return urlStr;
 };
 
 const rowClass = function ({ row, column, rowIndex, columnIndex }) {
@@ -376,7 +394,7 @@ getDataList();
 .img-box {
   padding: 30px 0 20px 40px;
   display: flex;
-  .img-line-box{
+  .img-line-box {
     width: 300px;
     word-wrap: break-word;
     // display: flex;
