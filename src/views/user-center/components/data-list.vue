@@ -252,7 +252,7 @@ const downWord = function (url) {
 };
 
 const getCodeName = function (codeId) {
-  return data.resGroupList.filter((item) => item.resGroup == codeId)[0].resName;
+  return data.resGroupList.filter((item) => item.resGroup == codeId)[0]?.resName;
 };
 
 const getStateName = function (state) {
@@ -346,6 +346,7 @@ getDtresAndQuotaList();
 
 const viewDetail = function (item) {
   data.currentDetail = item;
+  console.log(  data.currentDetail ,3333333333)
   data.isDetail = true;
 };
 
